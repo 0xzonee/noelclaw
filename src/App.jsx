@@ -4,7 +4,7 @@ import { api } from "../convex/_generated/api";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const TAKEOVER_URL = "https://example.com";
-const LOGO = "https://imgur.com/P0L7YJv.png";
+const LOGO = "/logo.png";
 
 /* ── DATA ── */
 const visitData = [
@@ -145,7 +145,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 }
 .hero-bg {
   position:absolute;inset:0;z-index:0;
-  background-image:url('https://i.imgur.com/qBxQA9R.png');
+  background-image:url('/bg-blue.png');
   background-size:cover;background-position:left center;
   background-repeat:no-repeat;
   width:100%;height:100%;
@@ -1020,7 +1020,7 @@ export default function App(){
           ? <span className="chat-fab-close">✕</span>
           : <>
               <img
-                src="https://i.imgur.com/UNvgJue.png"
+                src="/chat-icon.png"
                 className="chat-fab-img"
                 alt="Chat"
               />
