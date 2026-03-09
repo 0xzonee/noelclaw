@@ -13,9 +13,9 @@ const visitData = [
   {d:"7 Mar",v:920,u:640},{d:"8 Mar",v:860,u:580},{d:"9 Mar",v:1100,u:780},
 ];
 const articleViews = [
-  {name:"AGI Horizon",views:1840},{name:"AI Agents Prod.",views:1320},
-  {name:"Reasoning Models",views:1180},{name:"MCP Protocol",views:960},
-  {name:"Context Windows",views:820},{name:"Prompt Product",views:640},
+  {name:"NoelClaw: AI OS",views:3240},{name:"AGI Horizon",views:1840},
+  {name:"AI Agents Prod.",views:1320},{name:"Reasoning Models",views:1180},
+  {name:"MCP Protocol",views:960},{name:"Context Windows",views:820},
 ];
 const trafficSources = [
   {name:"X / Twitter",value:42,color:"#3b82f6"},{name:"Direct",value:28,color:"#6366f1"},
@@ -26,12 +26,12 @@ const monthlyData = [
   {m:"Jan",v:1480},{m:"Feb",v:2640},{m:"Mar",v:4200},
 ];
 const recentActivity = [
-  {time:"3m ago",event:"New reader from Singapore",type:"visit"},
-  {time:"11m ago",event:"AGI Horizon shared on X",type:"share"},
-  {time:"18m ago",event:"Chat session started",type:"chat"},
-  {time:"34m ago",event:"Reasoning Models read (full)",type:"read"},
-  {time:"1h ago",event:"New follower @noelclawfun",type:"follow"},
-  {time:"2h ago",event:"MCP Protocol — 96 new views",type:"view"},
+  {time:"1m ago",event:"NoelClaw: AI OS — 12 new reads",type:"view",name:"Alex"},
+  {time:"4m ago",event:"NoelClaw: AI OS shared on X",type:"share",name:"Maya"},
+  {time:"9m ago",event:"New reader from Singapore",type:"visit",name:"Ryan"},
+  {time:"22m ago",event:"NoelClaw: AI OS read (full)",type:"read",name:"Zara"},
+  {time:"45m ago",event:"New follower @noelclawfun",type:"follow",name:"Kai"},
+  {time:"1h ago",event:"AGI Horizon — 84 new views",type:"view",name:"Lena"},
 ];
 
 const CSS = `
@@ -58,6 +58,27 @@ const CSS = `
   --orange:   #f97316;
   --purple:   #a78bfa;
 }
+.light-mode {
+  --bg:       #f8f9ff;
+  --bg2:      #eef0fa;
+  --surface:  rgba(0,0,0,0.03);
+  --surface2: rgba(0,0,0,0.06);
+  --border:   rgba(0,0,0,0.08);
+  --border2:  rgba(0,0,0,0.15);
+  --blue:     #1a4fff;
+  --blue2:    #2563eb;
+  --blue-hi:  #1a4fff;
+  --text:     #0f1733;
+  --text2:    #4a5380;
+  --text3:    #9ba3c8;
+  --white:    #0f1733;
+  --green:    #16a37a;
+  --orange:   #ea6c00;
+  --purple:   #7c5cbf;
+}
+.light-mode body { background:#f8f9ff;color:#0f1733; }
+.light-mode .nav { background:rgba(248,249,255,0.9); }
+.light-mode .hero-bg { filter:brightness(.6) saturate(1.2); }
 
 html { scroll-behavior: smooth; }
 body { background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.01em;overflow-x:hidden;cursor:none; }
@@ -104,6 +125,19 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .nav-item.active { color:var(--white); }
 .nav-item.active::after { width:50%; }
 
+.theme-toggle {
+  display:none;width:32px;height:32px;border-radius:8px;background:none;
+  border:1px solid var(--border);cursor:pointer;font-size:.85rem;
+  align-items:center;justify-content:center;transition:all .2s;padding:0;
+}
+.theme-toggle:hover { border-color:var(--border2);background:var(--surface); }
+.nav-links-right { display:flex;align-items:center;gap:.5rem; }
+.theme-toggle-desktop {
+  width:32px;height:32px;border-radius:8px;background:none;
+  border:1px solid var(--border);cursor:none;font-size:.85rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0;
+}
+.theme-toggle-desktop:hover { border-color:var(--border2);background:var(--surface); }
 .nav-burger {
   display:none;flex-direction:column;gap:5px;justify-content:center;align-items:center;
   width:36px;height:36px;background:none;border:1px solid var(--border);border-radius:8px;
@@ -267,7 +301,10 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .act-list { display:flex;flex-direction:column;gap:.55rem; }
 .act-item { display:flex;align-items:center;gap:.85rem;padding:.65rem .9rem;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:7px;transition:border-color .2s; }
 .act-item:hover { border-color:var(--border2); }
-.act-ico { width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0; }
+.act-ico { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;overflow:hidden;border:1px solid var(--border); }
+.act-ico img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
+.act-badge { position:relative; }
+.act-badge::after { content:'';position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--bg);background:var(--green); }
 .ico-v{background:rgba(38,99,255,.12);color:var(--blue-hi)}.ico-s{background:rgba(34,211,165,.1);color:var(--green)}
 .ico-c{background:rgba(167,139,250,.1);color:var(--purple)}.ico-r{background:rgba(249,115,22,.1);color:var(--orange)}
 .act-ev { font-size:.76rem;color:var(--text);font-weight:400; }
@@ -505,6 +542,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 }
 @media(max-width:600px){
   html,body { overflow-x:hidden;width:100%; }
+  .theme-toggle { display:flex; }
   .app { overflow-x:hidden; }
   #cr,#crr { display:none; }
   body { cursor:auto; }
@@ -583,6 +621,7 @@ export default function App(){
   const [busy,setBusy]     = useState(false);
   const [range,setRange]   = useState("7d");
   const [menuOpen,setMenuOpen] = useState(false);
+  const [darkMode,setDarkMode] = useState(true);
   const convexArticles = useQuery(api.articles.list);
   const sendMessage = useAction(api.chat.chat);
   const ARTICLES = convexArticles ?? [];
@@ -627,23 +666,33 @@ export default function App(){
       <div id="cr" ref={crRef}/><div id="crr" ref={crrRef}/>
       <div className="grain"/>
 
-      <div className="app">
+      <div className={`app${darkMode?"":" light-mode"}`}>
 
         {/* ── NAV ── */}
         <nav className="nav">
           <div className="nav-logo" onClick={()=>{navTo("home");setMenuOpen(false);}}>
             <span><span className="logo-n">Noel</span>Claw</span>
           </div>
-          <div className="nav-links">
-            {["home","articles","dashboard","analytics","about"].map(p=>(
-              <button key={p} className={`nav-item${page===p&&!art?" active":""}`} onClick={()=>navTo(p)}>
-                {p[0].toUpperCase()+p.slice(1)}
-              </button>
-            ))}
+          <div style={{display:"flex",alignItems:"center",gap:".5rem"}}>
+            <div className="nav-links">
+              {["home","articles","dashboard","analytics","about"].map(p=>(
+                <button key={p} className={`nav-item${page===p&&!art?" active":""}`} onClick={()=>navTo(p)}>
+                  {p[0].toUpperCase()+p.slice(1)}
+                </button>
+              ))}
+            </div>
+            <button className="theme-toggle-desktop" onClick={()=>setDarkMode(d=>!d)} title="Toggle theme">
+              {darkMode ? "☀️" : "🌙"}
+            </button>
           </div>
-          <button className="nav-burger" onClick={()=>setMenuOpen(o=>!o)}>
-            <span/><span/><span/>
-          </button>
+          <div style={{display:"flex",alignItems:"center",gap:".5rem"}}>
+            <button className="theme-toggle" onClick={()=>setDarkMode(d=>!d)} title="Toggle theme">
+              {darkMode ? "☀️" : "🌙"}
+            </button>
+            <button className="nav-burger" onClick={()=>setMenuOpen(o=>!o)}>
+              <span/><span/><span/>
+            </button>
+          </div>
         </nav>
         {menuOpen&&(
           <div className="mob-menu">
@@ -744,7 +793,7 @@ export default function App(){
                 <div className="kpi kblue"><div className="kpi-lbl">Total Visitors<span className="kpi-ico">👁</span></div><div className="kpi-val">4.2K</div><div className="kpi-chg up">↑ +38% <span>vs last week</span></div></div>
                 <div className="kpi kgreen"><div className="kpi-lbl">Article Reads<span className="kpi-ico">📖</span></div><div className="kpi-val">2.8K</div><div className="kpi-chg up">↑ +22% <span>vs last week</span></div></div>
                 <div className="kpi korange"><div className="kpi-lbl">Chat Sessions<span className="kpi-ico">💬</span></div><div className="kpi-val">184</div><div className="kpi-chg up">↑ +29% <span>vs last week</span></div></div>
-                <div className="kpi kpurple"><div className="kpi-lbl">X Followers<span className="kpi-ico">✦</span></div><div className="kpi-val">48</div><div className="kpi-chg up">↑ +63 <span>this week</span></div></div>
+                <div className="kpi kpurple"><div className="kpi-lbl">X Followers<span className="kpi-ico">✦</span></div><div className="kpi-val">847</div><div className="kpi-chg up">↑ +63 <span>this week</span></div></div>
               </div>
               <div className="two-col">
                 <div className="chart-card" style={{margin:0}}>
@@ -780,8 +829,17 @@ export default function App(){
                 <div className="act-list">
                   {recentActivity.map((a,i)=>(
                     <div className="act-item" key={i}>
-                      <div className={`act-ico ${ACT_CLS[a.type]||"ico-v"}`}>{ACT_ICONS[a.type]||"·"}</div>
-                      <div><div className="act-ev">{a.event}</div><div className="act-time">{a.time}</div></div>
+                      <div className="act-ico act-badge">
+                        <img
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${a.name}&backgroundColor=1a1a2e,16213e,0f3460,533483`}
+                          alt={a.name}
+                        />
+                      </div>
+                      <div style={{flex:1}}>
+                        <div className="act-ev">{a.event}</div>
+                        <div className="act-time">{a.name} · {a.time}</div>
+                      </div>
+                      <div style={{fontSize:".7rem",color:"var(--text3)"}}>{ACT_ICONS[a.type]||"·"}</div>
                     </div>
                   ))}
                 </div>
@@ -917,8 +975,12 @@ export default function App(){
               </div>
               <p className="footer-desc">Personal AI operating system — blog, architecture decisions, and the journey from zero to a composable agent system.</p>
               <div className="footer-socials">
-                <a className="footer-social-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" title="X / Twitter">𝕏</a>
-                <a className="footer-social-btn" href="https://github.com" target="_blank" rel="noopener noreferrer" title="GitHub">⌥</a>
+                <a className="footer-social-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" title="X / Twitter">
+                  <img src="/x-logo.jpg" alt="X" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8}}/>
+                </a>
+                <a className="footer-social-btn" href="https://github.com/0xzonee" target="_blank" rel="noopener noreferrer" title="GitHub">
+                  <img src="/github-logo.png" alt="GitHub" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8}}/>
+                </a>
               </div>
             </div>
 
