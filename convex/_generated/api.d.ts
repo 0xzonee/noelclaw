@@ -9,6 +9,7 @@
  */
 
 import type * as articles from "../articles.js";
+import type * as bankr from "../bankr.js";
 import type * as chat from "../chat.js";
 import type * as moltbook from "../moltbook.js";
 
@@ -20,6 +21,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   articles: typeof articles;
+  bankr: typeof bankr;
   chat: typeof chat;
   moltbook: typeof moltbook;
 }>;

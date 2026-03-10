@@ -622,6 +622,20 @@ export default function App(){
   const convexArticles = useQuery(api.articles.list);
   const sendMessage = useAction(api.chat.chat);
   const postToMoltbook = useAction(api.moltbook.postArticle);
+  const getTokenPrice = useAction(api.bankr.getTokenPrice);
+  const [tokenData, setTokenData] = useState(null);
+  const [tokenLoading, setTokenLoading] = useState(false);
+
+  const fetchTokenPrice = async () => {
+    setTokenLoading(true);
+    try {
+      const res = await getTokenPrice({});
+      setTokenData(res.result);
+    } catch(e) {
+      setTokenData("Error: " + e.message);
+    }
+    setTokenLoading(false);
+  };
   const [moltPosting, setMoltPosting] = useState(false);
   const [moltStatus, setMoltStatus] = useState("");
 
@@ -835,6 +849,34 @@ export default function App(){
                 <div className="kpi korange"><div className="kpi-lbl">Chat Sessions<span className="kpi-ico">💬</span></div><div className="kpi-val">184</div><div className="kpi-chg up">↑ +29% <span>vs last week</span></div></div>
                 <div className="kpi kpurple"><div className="kpi-lbl">X Followers<span className="kpi-ico">✦</span></div><div className="kpi-val">50</div><div className="kpi-chg up">↑ +63 <span>this week</span></div></div>
               </div>
+
+              {/* $NOELCLAW Price Widget */}
+              <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",padding:"1.2rem 1.5rem",marginBottom:"1.5rem",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"1rem"}}>
+                <div style={{display:"flex",alignItems:"center",gap:".8rem"}}>
+                  <div style={{width:"36px",height:"36px",borderRadius:"50%",background:"linear-gradient(135deg,#1a4fff,#22d3a5)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".8rem",fontWeight:700,color:"#fff"}}>NC</div>
+                  <div>
+                    <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
+                    <div style={{fontSize:".68rem",color:"var(--text3)"}}>Base Chain</div>
+                  </div>
+                </div>
+                <div style={{flex:1,minWidth:"200px"}}>
+                  {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)"}}>Fetching live data...</div>}
+                  {tokenData && !tokenLoading && (
+                    <div style={{fontSize:".72rem",color:"var(--text2)",lineHeight:1.6}}>{typeof tokenData === "string" ? tokenData : JSON.stringify(tokenData)}</div>
+                  )}
+                  {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)"}}>Click to fetch live price data</div>}
+                </div>
+                <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
+                  background:"linear-gradient(135deg,#1a4fff22,#22d3a511)",
+                  border:"1px solid var(--border2)",borderRadius:"8px",
+                  padding:".45rem 1rem",fontSize:".72rem",color:"var(--blue-hi)",
+                  cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",
+                  transition:"all .2s",
+                }}>
+                  {tokenLoading ? "Loading..." : "🔄 Refresh Price"}
+                </button>
+              </div>
+
               <div className="two-col">
                 <div className="chart-card" style={{margin:0}}>
                   <div className="chart-hd"><div className="chart-title">Visitors · 9 Days</div><span className="cbadge cbadge-b">Live</span></div>
