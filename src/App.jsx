@@ -854,7 +854,7 @@ export default function App(){
               <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",padding:"1.2rem 1.5rem",marginBottom:"1.5rem"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"1rem"}}>
                   <div style={{display:"flex",alignItems:"center",gap:".8rem"}}>
-                    <div style={{width:"36px",height:"36px",borderRadius:"50%",background:"linear-gradient(135deg,#1a4fff,#22d3a5)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".8rem",fontWeight:700,color:"#fff"}}>NC</div>
+                    <img src="/logo.png" alt="NOELCLAW" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover"}}/>
                     <div>
                       <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
                       <div style={{fontSize:".68rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
@@ -883,6 +883,10 @@ export default function App(){
                         <div style={{textAlign:"right"}}>
                           <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>LIQUIDITY</div>
                           <div style={{fontSize:".85rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.liquidity||0).toLocaleString()}</div>
+                        </div>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>MKT CAP</div>
+                          <div style={{fontSize:".85rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.marketCap||0).toLocaleString()}</div>
                         </div>
                       </>
                     )}
