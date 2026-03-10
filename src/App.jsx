@@ -853,22 +853,13 @@ export default function App(){
 
               {/* $NOELCLAW Price Widget */}
               <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",padding:"1.2rem 1.5rem",marginBottom:"1.5rem"}}>
-                {/* Top row: logo + name + refresh */}
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:".9rem"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:".7rem"}}>
-                    <img src="/logo.png" alt="NOELCLAW" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
-                    <div>
-                      <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
-                      <div style={{fontSize:".65rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
-                    </div>
+                {/* Top row: logo + name */}
+                <div style={{display:"flex",alignItems:"center",gap:".7rem",marginBottom:".9rem"}}>
+                  <img src="/logo.png" alt="NOELCLAW" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
+                  <div>
+                    <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
+                    <div style={{fontSize:".65rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
                   </div>
-                  <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
-                    background:"none",border:"1px solid var(--border)",borderRadius:"8px",
-                    padding:".3rem .5rem",cursor:"pointer",display:"flex",alignItems:"center",
-                    opacity:tokenLoading?.5:1,transition:"opacity .2s",
-                  }}>
-                    <img src="/refresh.png" alt="Refresh" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.7,animation:tokenLoading?"spin 1s linear infinite":"none"}}/>
-                  </button>
                 </div>
                 {/* Price + change */}
                 {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price && (
@@ -879,14 +870,15 @@ export default function App(){
                         {parseFloat(tokenData.priceChange24h||0)>=0?"▲":"▼"} {Math.abs(parseFloat(tokenData.priceChange24h||0)).toFixed(2)}% 24h
                       </div>
                     </div>
-                    {/* Stats grid */}
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:".5rem"}}>
+                    {/* Stats grid 2x2 */}
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:".5rem",marginBottom:".8rem"}}>
                       {[
                         {label:"VOL 24H", val:"$"+parseFloat(tokenData.volume24h||0).toLocaleString()},
                         {label:"LIQUIDITY", val:"$"+parseFloat(tokenData.liquidity||0).toLocaleString()},
                         {label:"MKT CAP", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
+                        {label:"FDV", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
                       ].map(({label,val})=>(
-                        <div key={label} style={{background:"var(--bg2,#0d1117)",borderRadius:"8px",padding:".5rem .7rem"}}>
+                        <div key={label} style={{background:"#0d1117",borderRadius:"8px",padding:".5rem .7rem"}}>
                           <div style={{fontSize:".6rem",color:"var(--text3)",letterSpacing:".06em",marginBottom:".2rem"}}>{label}</div>
                           <div style={{fontSize:".78rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>{val}</div>
                         </div>
@@ -894,8 +886,19 @@ export default function App(){
                     </div>
                   </>
                 )}
-                {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)"}}>Fetching live data...</div>}
-                {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)"}}>Click refresh to load price</div>}
+                {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)",marginBottom:".8rem"}}>Fetching live data...</div>}
+                {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)",marginBottom:".8rem"}}>Click refresh to load price</div>}
+                {/* Refresh button centered below */}
+                <div style={{display:"flex",justifyContent:"center",marginTop:".2rem"}}>
+                  <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
+                    background:"#0d1117",border:"1px solid var(--border)",borderRadius:"8px",
+                    padding:".4rem .8rem",cursor:"pointer",display:"flex",alignItems:"center",gap:".4rem",
+                    opacity:tokenLoading?.5:1,transition:"opacity .2s",
+                  }}>
+                    <img src="/refresh.png" alt="Refresh" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8,animation:tokenLoading?"spin 1s linear infinite":"none"}}/>
+                    <span style={{fontSize:".7rem",color:"var(--text2)",fontFamily:"inherit"}}>{tokenLoading?"Loading...":"Refresh"}</span>
+                  </button>
+                </div>
               </div>
 
               {/* DexScreener Chart */}
