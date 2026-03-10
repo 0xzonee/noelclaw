@@ -164,6 +164,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 /* ── PAGE TRANSITION ── */
 .page { animation:pin .45s cubic-bezier(.23,1,.32,1) both; width:100%; }
 @keyframes pin { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
 /* ── MAIN (full width now, no right panel) ── */
 .main { flex:1; width:100%; }
@@ -852,56 +853,49 @@ export default function App(){
 
               {/* $NOELCLAW Price Widget */}
               <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",padding:"1.2rem 1.5rem",marginBottom:"1.5rem"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"1rem"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:".8rem"}}>
-                    <img src="/logo.png" alt="NOELCLAW" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover"}}/>
+                {/* Top row: logo + name + refresh */}
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:".9rem"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:".7rem"}}>
+                    <img src="/logo.png" alt="NOELCLAW" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
                     <div>
                       <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
-                      <div style={{fontSize:".68rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
+                      <div style={{fontSize:".65rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
                     </div>
                   </div>
-                  <div style={{display:"flex",alignItems:"center",gap:"1rem",flexWrap:"wrap"}}>
-                    {tokenData && !tokenLoading && typeof tokenData === "string" && (
-                      <div style={{fontSize:".72rem",color:"#ff4d4d"}}>{tokenData}</div>
-                    )}
-                    {tokenData && !tokenLoading && typeof tokenData === "object" && !tokenData.price && (
-                      <div style={{fontSize:".72rem",color:"var(--text2)",wordBreak:"break-all"}}>{JSON.stringify(tokenData)}</div>
-                    )}
-                    {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price && (
-                      <>
-                        <div style={{textAlign:"right",borderRight:"1px solid var(--border)",paddingRight:"1rem"}}>
-                          <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>PRICE</div>
-                          <div style={{fontSize:"1.05rem",fontWeight:700,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.price||0).toFixed(8)}</div>
-                          <div style={{fontSize:".7rem",fontWeight:600,color:parseFloat(tokenData.priceChange24h||0)>=0?"#22d3a5":"#ff4d4d",marginTop:".15rem"}}>
-                            {parseFloat(tokenData.priceChange24h||0)>=0?"▲":"▼"} {Math.abs(parseFloat(tokenData.priceChange24h||0)).toFixed(2)}% <span style={{fontWeight:400,color:"var(--text3)"}}>24h</span>
-                          </div>
-                        </div>
-                        <div style={{textAlign:"right",borderRight:"1px solid var(--border)",paddingRight:"1rem"}}>
-                          <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>VOL 24H</div>
-                          <div style={{fontSize:".85rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.volume24h||0).toLocaleString()}</div>
-                        </div>
-                        <div style={{textAlign:"right"}}>
-                          <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>LIQUIDITY</div>
-                          <div style={{fontSize:".85rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.liquidity||0).toLocaleString()}</div>
-                        </div>
-                        <div style={{textAlign:"right"}}>
-                          <div style={{fontSize:".65rem",color:"var(--text3)",marginBottom:".2rem",letterSpacing:".05em"}}>MKT CAP</div>
-                          <div style={{fontSize:".85rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.marketCap||0).toLocaleString()}</div>
-                        </div>
-                      </>
-                    )}
-                    {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)"}}>Fetching...</div>}
-                    {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)"}}>Click to load price</div>}
-                    <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
-                      background:"linear-gradient(135deg,#1a4fff22,#22d3a511)",
-                      border:"1px solid var(--border2)",borderRadius:"8px",
-                      padding:".45rem 1rem",fontSize:".72rem",color:"var(--blue-hi)",
-                      cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",
-                    }}>
-                      {tokenLoading ? "Loading..." : "🔄 Refresh"}
-                    </button>
-                  </div>
+                  <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
+                    background:"none",border:"1px solid var(--border)",borderRadius:"8px",
+                    padding:".3rem .5rem",cursor:"pointer",display:"flex",alignItems:"center",
+                    opacity:tokenLoading?.5:1,transition:"opacity .2s",
+                  }}>
+                    <img src="/refresh.png" alt="Refresh" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.7,animation:tokenLoading?"spin 1s linear infinite":"none"}}/>
+                  </button>
                 </div>
+                {/* Price + change */}
+                {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price && (
+                  <>
+                    <div style={{display:"flex",alignItems:"baseline",gap:".5rem",marginBottom:".8rem"}}>
+                      <div style={{fontSize:"1.4rem",fontWeight:700,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.price||0).toFixed(8)}</div>
+                      <div style={{fontSize:".75rem",fontWeight:600,color:parseFloat(tokenData.priceChange24h||0)>=0?"#22d3a5":"#ff4d4d"}}>
+                        {parseFloat(tokenData.priceChange24h||0)>=0?"▲":"▼"} {Math.abs(parseFloat(tokenData.priceChange24h||0)).toFixed(2)}% 24h
+                      </div>
+                    </div>
+                    {/* Stats grid */}
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:".5rem"}}>
+                      {[
+                        {label:"VOL 24H", val:"$"+parseFloat(tokenData.volume24h||0).toLocaleString()},
+                        {label:"LIQUIDITY", val:"$"+parseFloat(tokenData.liquidity||0).toLocaleString()},
+                        {label:"MKT CAP", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
+                      ].map(({label,val})=>(
+                        <div key={label} style={{background:"var(--bg2,#0d1117)",borderRadius:"8px",padding:".5rem .7rem"}}>
+                          <div style={{fontSize:".6rem",color:"var(--text3)",letterSpacing:".06em",marginBottom:".2rem"}}>{label}</div>
+                          <div style={{fontSize:".78rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>{val}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)"}}>Fetching live data...</div>}
+                {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)"}}>Click refresh to load price</div>}
               </div>
 
               {/* DexScreener Chart */}
