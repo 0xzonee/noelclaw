@@ -463,7 +463,9 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 /* CHAT POPUP */
 .chat-popup {
   position:fixed;bottom:6rem;right:2rem;z-index:500;
-  width:360px;height:520px;
+  width:360px;
+  max-height:min(520px, calc(100vh - 7rem));
+  height:min(520px, calc(100vh - 7rem));
   background:rgba(8,9,26,0.97);
   border:1px solid var(--border);
   border-radius:16px;
@@ -500,7 +502,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .cp-btn { width:26px;height:26px;border-radius:6px;background:none;border:1px solid var(--border);color:var(--text2);cursor:none;font-size:.75rem;display:flex;align-items:center;justify-content:center;transition:all .18s; }
 .cp-btn:hover { color:var(--white);border-color:var(--border2);background:var(--surface); }
 
-.cp-msgs { flex:1;overflow-y:auto;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.8rem; }
+.cp-msgs { flex:1;overflow-y:auto;overflow-x:hidden;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.8rem;min-height:0; }
 .bub { max-width:88%;font-size:.8rem;line-height:1.75;animation:bi .22s cubic-bezier(.34,1.56,.64,1) both;word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap; }
 @keyframes bi{from{opacity:0;transform:scale(.88) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .bub.u { align-self:flex-end;background:var(--blue2);color:white;padding:.6rem .9rem;border-radius:13px 13px 3px 13px;box-shadow:0 4px 14px rgba(26,79,255,.22);border:none;outline:none; }
@@ -538,7 +540,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
   .footer-bottom { padding-left:1.5rem;padding-right:1.5rem; }
   .an-kpis,.kpi-grid { grid-template-columns:repeat(2,1fr); }
   .three-col { grid-template-columns:1fr; }
-  .chat-popup { width:calc(100vw - 2.5rem);right:1.25rem;bottom:5.5rem; }
+  .chat-popup { width:calc(100vw - 2.5rem);right:1.25rem;bottom:5.5rem;max-height:min(520px, calc(100vh - 7rem));height:min(520px, calc(100vh - 7rem)); }
 }
 @media(max-width:600px){
   html,body { overflow-x:hidden;width:100%; }
@@ -567,7 +569,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
   .footer-bottom { flex-direction:column;gap:.8rem;padding:1rem 1.2rem; }
   .an-kpis,.kpi-grid { grid-template-columns:1fr 1fr; }
   .chat-fab { bottom:.85rem;right:.85rem;width:50px;height:50px;cursor:auto; }
-  .chat-popup { position:fixed;bottom:0;left:0;right:0;width:100%;height:75vh;border-radius:20px 20px 0 0;border-bottom:none; }
+  .chat-popup { position:fixed;bottom:0;left:0;right:0;width:100%;max-height:75vh;height:75vh;border-radius:20px 20px 0 0;border-bottom:none; }
   .sug,.cp-btn,.cp-send,.nav-item,.nav-logo,.cta-solid,.cta-outline { cursor:auto; }
 }
 `;
@@ -820,7 +822,7 @@ export default function App(){
                       <button className="cta-solid" onClick={()=>navTo("articles")}>Read Articles</button>
                       <a className="cta-outline" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 Follow</a>
                       <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" className="cta-outline" style={{boxShadow:"0 0 20px rgba(26,79,255,.2)"}}>
-                        Buy $NOELCLAW ↗
+                        Buy $NOELCLAW
                       </a>
                     </div>
                   </div>
