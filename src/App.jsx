@@ -80,6 +80,33 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 
 .app { position:relative;z-index:1;min-height:100vh;width:100%;display:flex;flex-direction:column;overflow-x:hidden; }
 
+/* ── CA BAR ── */
+.ca-bar {
+  width:100%;background:#03050c;border-bottom:1px solid rgba(255,255,255,0.07);
+  padding:.4rem 0;display:flex;align-items:center;
+  font-size:.62rem;font-weight:300;letter-spacing:.08em;color:var(--text2);
+  position:sticky;top:0;z-index:201;overflow:hidden;
+}
+.ca-bar-inner {
+  display:flex;align-items:center;gap:2rem;
+  white-space:nowrap;
+  animation:ca-scroll 30s linear infinite;
+  will-change:transform;
+}
+.ca-bar:hover .ca-bar-inner { animation-play-state:paused; }
+@keyframes ca-scroll {
+  from { transform:translateX(0); }
+  to { transform:translateX(-50%); }
+}
+.ca-label { color:var(--blue-hi);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.6rem; }
+.ca-addr {
+  font-family:'Courier New',monospace;color:var(--text2);font-size:.59rem;
+  cursor:pointer;transition:color .2s;letter-spacing:.03em;
+}
+.ca-addr:hover { color:#fff; }
+.ca-sep { color:var(--text3); }
+.ca-dot { width:3px;height:3px;border-radius:50%;background:var(--blue-hi);flex-shrink:0;display:inline-block; }
+
 /* ── NAV ── */
 .nav {
   display:flex;align-items:center;justify-content:space-between;
@@ -639,6 +666,24 @@ export default function App(){
       <div className="app">
 
         {/* ── NAV ── */}
+        <div style={{width:"100%",background:"#03050c",borderBottom:"1px solid rgba(255,255,255,0.07)",padding:".35rem 0",display:"flex",alignItems:"center",overflow:"hidden",position:"sticky",top:0,zIndex:201}}>
+          <div style={{display:"flex",alignItems:"center",gap:"1.8rem",animation:"ca-scroll 28s linear infinite",whiteSpace:"nowrap",willChange:"transform",fontSize:".6rem",letterSpacing:".07em",color:"rgba(180,190,220,0.7)"}}>
+            {[0,1].map(i=>(
+              <span key={i} style={{display:"flex",alignItems:"center",gap:"1.8rem"}}>
+                <span style={{color:"#4d85ff",fontWeight:600,letterSpacing:".14em"}}>$NOEL</span>
+                <span style={{width:3,height:3,borderRadius:"50%",background:"#4d85ff",display:"inline-block",opacity:.7,flexShrink:0}}/>
+                <span style={{fontFamily:"monospace",cursor:"pointer"}} onClick={()=>navigator.clipboard.writeText("0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3")} title="Copy CA">
+                  CA: 0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3
+                </span>
+                <span style={{opacity:.4}}>·</span>
+                <a href="https://takeover.fun/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" style={{color:"#22d3a5",textDecoration:"none"}}>Mint Tiles ↗</a>
+                <span style={{opacity:.4}}>·</span>
+                <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" style={{color:"rgba(180,190,220,0.7)",textDecoration:"none"}}>@noelclawfun</a>
+                <span style={{opacity:.4}}>·</span>
+              </span>
+            ))}
+          </div>
+        </div>
         <nav className="nav">
           <div className="nav-logo" onClick={()=>{navTo("home");setMenuOpen(false);}}>
             <span><span className="logo-n">Noel</span>Claw</span>
@@ -960,8 +1005,13 @@ export default function App(){
             <div>
               <div className="footer-col-title">Resources</div>
               <div className="footer-links">
-                {["Getting Started","AI Agent Guide","Architecture Docs","Build in Public"].map(l=>(
-                  <span key={l} className="footer-link" style={{cursor:"default"}}>{l}</span>
+                {[
+                  {l:"Getting Started",u:"https://github.com/0xzonee/noelclaw"},
+                  {l:"AI Agent Guide",u:"https://github.com/0xzonee/noelclaw"},
+                  {l:"Architecture Docs",u:"https://github.com/0xzonee/noelclaw"},
+                  {l:"Build in Public",u:"https://github.com/0xzonee/noelclaw"},
+                ].map(({l,u})=>(
+                  <a key={l} className="footer-link" href={u} target="_blank" rel="noopener noreferrer">{l}</a>
                 ))}
               </div>
             </div>
@@ -972,8 +1022,8 @@ export default function App(){
               <div className="footer-links">
                 <button className="footer-link btn-style" onClick={()=>navTo("about")}>About</button>
                 <a className="footer-link" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
-                <a className="footer-link" href={TAKEOVER_URL} target="_blank" rel="noopener noreferrer">Takeover</a>
-                <span className="footer-link" style={{cursor:"default"}}>Contact</span>
+                <a className="footer-link" href="https://takeover.fun/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">Takeover</a>
+                <a className="footer-link" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">Contact</a>
               </div>
             </div>
           </div>
@@ -981,7 +1031,7 @@ export default function App(){
           <div className="footer-bottom">
             <div>
               <div className="footer-copy">© 2026 NoelClaw. All rights reserved.</div>
-              <div className="footer-ca">CA: <span>— Coming Soon</span></div>
+              <div className="footer-ca">CA: <span style={{fontFamily:"monospace",fontSize:".58rem",opacity:.7}}>0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3</span></div>
             </div>
             <div className="footer-legal">
               <a href="#">Privacy Policy</a>
