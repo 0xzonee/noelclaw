@@ -670,7 +670,7 @@ export default function App(){
 
   useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"});},[msgs,busy]);
 
-  const navTo=p=>{setPage(p);setArt(null);window.scrollTo({top:0,behavior:"instant"});setMenuOpen(false);};
+  const navTo=p=>{setPage(p);setArt(null);window.scrollTo({top:0,behavior:"instant"});setMenuOpen(false);if(p==="dashboard")fetchTokenPrice();};
   useEffect(()=>{
     const handler=()=>{ if(menuOpen) setMenuOpen(false); };
     window.addEventListener('scroll',handler,{passive:true});
@@ -898,6 +898,19 @@ export default function App(){
                     </button>
                   </div>
                 </div>
+              </div>
+
+              {/* DexScreener Chart */}
+              <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",marginBottom:"1.5rem",overflow:"hidden"}}>
+                <div style={{padding:".8rem 1.2rem",borderBottom:"1px solid var(--border)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{fontSize:".78rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW Chart</div>
+                  <a href="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7" target="_blank" rel="noopener noreferrer" style={{fontSize:".68rem",color:"var(--blue-hi)",textDecoration:"none"}}>DexScreener ↗</a>
+                </div>
+                <iframe
+                  src="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7?embed=1&theme=dark&trades=0&info=0"
+                  style={{width:"100%",height:"400px",border:"none"}}
+                  title="NOELCLAW Chart"
+                />
               </div>
 
               <div className="two-col">
