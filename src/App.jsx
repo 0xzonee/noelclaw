@@ -501,7 +501,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .cp-btn:hover { color:var(--white);border-color:var(--border2);background:var(--surface); }
 
 .cp-msgs { flex:1;overflow-y:auto;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.8rem; }
-.bub { max-width:88%;font-size:.8rem;line-height:1.75;animation:bi .22s cubic-bezier(.34,1.56,.64,1) both; }
+.bub { max-width:88%;font-size:.8rem;line-height:1.75;animation:bi .22s cubic-bezier(.34,1.56,.64,1) both;word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap; }
 @keyframes bi{from{opacity:0;transform:scale(.88) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .bub.u { align-self:flex-end;background:var(--blue2);color:white;padding:.6rem .9rem;border-radius:13px 13px 3px 13px;box-shadow:0 4px 14px rgba(26,79,255,.22);border:none;outline:none; }
 .bub.a { align-self:flex-start;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.6rem .9rem;border-radius:3px 13px 13px 13px; }
