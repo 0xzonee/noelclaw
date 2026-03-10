@@ -800,16 +800,7 @@ export default function App(){
                     <div className="hero-ctas">
                       <button className="cta-solid" onClick={()=>navTo("articles")}>Read Articles ↗</button>
                       <a className="cta-outline" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 Follow</a>
-                      <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" style={{
-                        display:"inline-flex",alignItems:"center",gap:".45rem",
-                        background:"linear-gradient(135deg,#1a4fff,#22d3a5)",
-                        color:"#fff",padding:".7rem 1.6rem",borderRadius:"6px",
-                        fontSize:".78rem",fontWeight:600,letterSpacing:".08em",
-                        textDecoration:"none",transition:"opacity .2s,transform .18s",
-                        boxShadow:"0 0 24px rgba(26,79,255,.35)",
-                      }}
-                      onMouseEnter={e=>{e.currentTarget.style.opacity=".85";e.currentTarget.style.transform="translateY(-2px)";}}
-                      onMouseLeave={e=>{e.currentTarget.style.opacity="1";e.currentTarget.style.transform="translateY(0)";}}>
+                      <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" className="cta-outline" style={{boxShadow:"0 0 20px rgba(26,79,255,.2)"}}>
                         Buy $NOELCLAW ↗
                       </a>
                     </div>
