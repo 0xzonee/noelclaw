@@ -1206,9 +1206,8 @@ export default function App(){
           {/* ABOUT */}
           {!art&&page==="about"&&(
             <div className="page">
-              <div className="about">
-                {/* Top header — spans full width */}
-                <div className="abt-top" style={{gridColumn:"1/-1"}}>
+              <div className="about" style={{display:"block",maxWidth:"720px",margin:"0 auto",padding:"4rem 3.5rem"}}>
+                <div className="abt-top" style={{gridColumn:"unset"}}>
                   <div className="abt-wrap">
                     <img src={LOGO} className="abt-logo" alt="NoelClaw"/>
                     <div className="abt-ring"/>
@@ -1219,68 +1218,42 @@ export default function App(){
                   </div>
                 </div>
 
-                {/* LEFT — story + stack */}
-                <div className="abt-left">
-                  <div className="stk-hd">The Story</div>
-                  <p className="abt-body">
-                    NoelClaw started as a simple question: <strong>what would it look like if your AI tools weren't scattered across 10 different apps?</strong><br/><br/>
-                    The idea was to build one composable system — a personal AI operating system — that could read, write, research, and act on your behalf. Not a chatbot. Not a productivity wrapper. Something closer to an OS layer for thinking.<br/><br/>
-                    Every decision made while building NoelClaw gets documented publicly. The architecture, the failures, the pivots. Because the most valuable thing isn't the final product — it's the reasoning behind every choice.<br/><br/>
-                    This site is that log. The articles are real. The AI you can chat with here is part of what's being built. The token is how we share the upside with the people following along.<br/><br/>
-                    <strong>We're building in public. Come watch — or build with us.</strong>
-                  </p>
+                <div className="stk-hd">What is NoelClaw?</div>
+                <p className="abt-body">
+                  NoelClaw is a personal AI operating system — built and documented in public. It's not a product you download or a SaaS you subscribe to. It's a composable system that reads, writes, researches, and acts on your behalf. Think of it as an OS layer for thinking, built on top of modern AI infrastructure.<br/><br/>
+                  This site is the live log of that build. Every article here is a real decision, a real system, or a real lesson from the process.
+                </p>
 
-                  <div className="stk-hd">Stack</div>
-                  <div className="chips">
-                    {["React","Vite","TypeScript","Convex","Claude API","Vercel","DexScreener","Moltbook","Base Chain"].map(s=>(
-                      <span className="chip" key={s}>{s}</span>
-                    ))}
-                  </div>
-                </div>
+                <div className="stk-hd">What's being built?</div>
+                <p className="abt-body">
+                  The core of NoelClaw is a set of composable AI agents — each one handling a specific domain: research, writing, memory, scheduling, and more. Instead of switching between 10 different apps, each with their own interface, NoelClaw aims to route everything through one unified layer.<br/><br/>
+                  Right now, the stack includes a Claude-powered chat assistant embedded in this site, a content publishing pipeline, token integration on Base Chain via <strong>$NOELCLAW</strong>, and a growing library of architecture decisions documented publicly.
+                </p>
 
-                {/* RIGHT — stats + links */}
-                <div className="abt-right">
-                  <div className="abt-card">
-                    <div className="abt-card-title">Project Stats</div>
-                    {[
-                      ["Articles","12+"],["AI Systems","3"],["Status","Live 🟢"],
-                      ["Token","$NOELCLAW"],["Chain","Base"],["Readers","Growing"],
-                    ].map(([l,v])=>(
-                      <div className="abt-stat-row" key={l}>
-                        <span className="abt-stat-label">{l}</span>
-                        <span className="abt-stat-val">{v}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="stk-hd">Why build this?</div>
+                <p className="abt-body">
+                  Most AI tools today are isolated. You open a browser, type a prompt, get an answer, and the loop ends there. The AI doesn't remember, doesn't act, and doesn't live inside your environment.<br/><br/>
+                  NoelClaw started from a simple frustration: <strong>why do your tools not talk to each other?</strong> The answer wasn't to find a better app — it was to build a system that connects them. That's the real goal here. Not a chatbot. Not a wrapper. A genuine operating layer.
+                </p>
 
-                  <div className="abt-card">
-                    <div className="abt-card-title">Links</div>
-                    <div className="abt-links">
-                      <a className="abt-link-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">
-                        <span style={{fontSize:"1rem"}}>𝕏</span> @noelclawfun
-                      </a>
-                      <a className="abt-link-btn" href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">
-                        <span>🔗</span> Buy $NOELCLAW
-                      </a>
-                      <a className="abt-link-btn" href="https://takeover.fun/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">
-                        <span>🎯</span> Mint Tiles
-                      </a>
-                      <button className="abt-link-btn" onClick={()=>setChatOpen(true)} style={{border:"1px solid var(--border)"}}>
-                        <span>💬</span> Chat with Noel
-                      </button>
-                    </div>
-                  </div>
+                <div className="stk-hd">Vision & Mission</div>
+                <p className="abt-body">
+                  <strong>Vision:</strong> A world where every person has a personal AI system that understands their context, executes their intentions, and grows smarter over time — without requiring technical expertise to operate.<br/><br/>
+                  <strong>Mission:</strong> Build that system in the open. Document every decision. Share every failure. Make the architecture reproducible so others can learn from it, build on it, or fork it entirely. The most valuable output isn't the final product — it's the reasoning trail left behind.
+                </p>
 
-                  <div className="abt-card" style={{background:"linear-gradient(135deg,rgba(26,79,255,.08),rgba(77,133,255,.04))"}}>
-                    <div className="abt-card-title">Building in public</div>
-                    <p style={{fontSize:".75rem",color:"var(--text2)",lineHeight:1.7,marginBottom:".8rem"}}>
-                      Every decision, failure, and insight gets documented. Follow along on X for real-time updates.
-                    </p>
-                    <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer"
-                      style={{display:"inline-flex",alignItems:"center",gap:".4rem",fontSize:".72rem",color:"var(--blue-hi)",textDecoration:"none"}}>
-                      Follow the journey →
-                    </a>
-                  </div>
+                <div className="stk-hd">A note to close</div>
+                <p className="abt-body">
+                  This is early. A lot of what's here is still being figured out in real time. But that's the point — NoelClaw exists to show what's possible when you build deliberately, share honestly, and don't wait until things are perfect to ship.<br/><br/>
+                  If any of this resonates, follow along on <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">X @noelclawfun</a>. And if you want to own a piece of the system, <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">$NOELCLAW is live on Base</a>.<br/><br/>
+                  <strong>We're building in public. Come watch — or build with us.</strong>
+                </p>
+
+                <div className="stk-hd">Stack</div>
+                <div className="chips">
+                  {["React","Vite","TypeScript","Convex","Claude API","Vercel","DexScreener","Moltbook","Base Chain"].map(s=>(
+                    <span className="chip" key={s}>{s}</span>
+                  ))}
                 </div>
               </div>
             </div>
