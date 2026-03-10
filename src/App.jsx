@@ -985,7 +985,7 @@ export default function App(){
                 <a className="footer-social-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" title="X / Twitter">
                   <img src="/x-logo.jpg" alt="X" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8}}/>
                 </a>
-                <a className="footer-social-btn" href="https://github.com/0xzonee" target="_blank" rel="noopener noreferrer" title="GitHub">
+                <a className="footer-social-btn" href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" title="GitHub">
                   <img src="/github-logo.png" alt="GitHub" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8}}/>
                 </a>
               </div>
@@ -1006,7 +1006,7 @@ export default function App(){
               <div className="footer-col-title">Resources</div>
               <div className="footer-links">
                 {["Getting Started","AI Agent Guide","Architecture Docs","Build in Public"].map(l=>(
-                  <span key={l} className="footer-link" style={{cursor:"default",opacity:.5}}>{l}</span>
+                  <span key={l} className="footer-link" style={{cursor:"default",opacity:.4}}>{l}</span>
                 ))}
               </div>
             </div>
