@@ -25,14 +25,29 @@ const monthlyData = [
   {m:"Oct",v:340},{m:"Nov",v:620},{m:"Dec",v:890},
   {m:"Jan",v:1480},{m:"Feb",v:2640},{m:"Mar",v:4200},
 ];
-const recentActivity = [
-  {time:"1m ago",event:"NoelClaw: AI OS — 12 new reads",type:"view",name:"Alex"},
-  {time:"4m ago",event:"NoelClaw: AI OS shared on X",type:"share",name:"Maya"},
-  {time:"9m ago",event:"New reader from Singapore",type:"visit",name:"Ryan"},
-  {time:"22m ago",event:"NoelClaw: AI OS read (full)",type:"read",name:"Zara"},
-  {time:"45m ago",event:"New follower @noelclawfun",type:"follow",name:"Kai"},
-  {time:"1h ago",event:"AGI Horizon — 84 new views",type:"view",name:"Lena"},
+const RANDOM_NAMES = ["Alex","Maya","Ryan","Zara","Kai","Lena","Omar","Noa","Jin","Sasha","Felix","Aria","Remi","Yuki","Dani","Theo","Ines","Cole","Mia","Ezra"];
+const RANDOM_CITIES = ["Singapore","Tokyo","Berlin","London","NYC","Sydney","Seoul","Amsterdam","São Paulo","Toronto"];
+const ACT_TEMPLATES = [
+  {tmpl:(n,c)=>`${n} from ${c} just read an article`,type:"read"},
+  {tmpl:(n)=>`${n} opened a chat with Noel`,type:"chat"},
+  {tmpl:(n)=>`${n} shared NoelClaw: AI OS on X`,type:"share"},
+  {tmpl:(n)=>`${n} grabbed $NOELCLAW on Base`,type:"token"},
+  {tmpl:(n,c)=>`New visitor from ${c}`,type:"visit"},
+  {tmpl:(n)=>`${n} completed AGI Horizon`,type:"read"},
+  {tmpl:(n)=>`${n} followed @noelclawfun`,type:"follow"},
+  {tmpl:(n,c)=>`${n} in ${c} — first session`,type:"visit"},
+  {tmpl:(n)=>`${n} sent 8 messages to Noel`,type:"chat"},
+  {tmpl:(n)=>`${n} bookmarked Reasoning Models`,type:"read"},
 ];
+function genActivity() {
+  return Array.from({length:8},(_,i)=>{
+    const name = RANDOM_NAMES[Math.floor(Math.random()*RANDOM_NAMES.length)];
+    const city = RANDOM_CITIES[Math.floor(Math.random()*RANDOM_CITIES.length)];
+    const tpl = ACT_TEMPLATES[Math.floor(Math.random()*ACT_TEMPLATES.length)];
+    const mins = [1,3,7,14,22,38,55,72][i];
+    return {name,event:tpl.tmpl(name,city),type:tpl.type,time:mins<60?`${mins}m ago`:`${Math.floor(mins/60)}h ago`};
+  });
+}
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
@@ -67,6 +82,9 @@ const CSS = `
 html { scroll-behavior: smooth; }
 body { background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.01em;overflow-x:hidden;cursor:none; }
 
+/* Smooth all interactive transitions globally */
+a, button { transition:color .18s,background .18s,border-color .18s,opacity .18s,transform .18s; }
+
 #cr  { width:8px;height:8px;border-radius:50%;background:#fff;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);transition:width .18s,height .18s;mix-blend-mode:difference; }
 #crr { width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.28);position:fixed;top:0;left:0;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);transition:left .12s cubic-bezier(.23,1,.32,1),top .12s cubic-bezier(.23,1,.32,1),width .25s,height .25s; }
 body:has(a:hover) #cr,body:has(button:hover) #cr { width:14px;height:14px; }
@@ -76,6 +94,8 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 ::-webkit-scrollbar-thumb { background:var(--text3);border-radius:2px; }
 
 .grain { position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;animation:gr .6s steps(1) infinite; }
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--blue-hi)}50%{opacity:.4;box-shadow:0 0 12px var(--blue-hi)}}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes gr{0%{transform:translate(0,0)}16%{transform:translate(-4%,-2%)}33%{transform:translate(2%,4%)}50%{transform:translate(-2%,0)}66%{transform:translate(4%,-4%)}83%{transform:translate(-3%,2%)}100%{transform:translate(0,0)}}
 
 .app { position:relative;z-index:1;min-height:100vh;width:100%;display:flex;flex-direction:column;overflow-x:hidden; }
@@ -320,79 +340,112 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .rec-card-meta { font-size:.62rem;color:var(--text3);margin-top:.6rem; }
 
 /* ── DASHBOARD ── */
-.dash { padding:2.5rem 3.5rem;animation:pin .4s cubic-bezier(.23,1,.32,1) both; }
-.pg-title { font-family:'Inter',sans-serif;font-size:2rem;font-weight:200;color:var(--white);margin-bottom:.3rem;line-height:1;letter-spacing:-.01em; }
-.pg-sub { font-size:.7rem;color:var(--text2);margin-bottom:2rem;font-weight:200;letter-spacing:.1em; }
+.dash { padding:0;animation:pin .4s cubic-bezier(.23,1,.32,1) both; }
+.pg-hd { padding:2.5rem 3.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.pg-title { font-family:'Inter',sans-serif;font-size:1.5rem;font-weight:200;color:var(--white);margin-bottom:.2rem;line-height:1;letter-spacing:-.02em; }
+.pg-sub { font-size:.6rem;color:var(--text3);font-weight:300;letter-spacing:.18em;text-transform:uppercase; }
 
-.kpi-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.8rem; }
-.kpi { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.3rem 1.5rem;position:relative;overflow:hidden;transition:border-color .22s,transform .2s; }
-.kpi:hover { border-color:var(--border2);transform:translateY(-2px); }
-.kpi::before { content:'';position:absolute;top:0;left:0;right:0;height:1px;border-radius:8px 8px 0 0; }
-.kpi.kblue::before{background:linear-gradient(90deg,var(--blue2),var(--blue-hi))}
-.kpi.kgreen::before{background:linear-gradient(90deg,var(--green),#34d399)}
-.kpi.korange::before{background:linear-gradient(90deg,var(--orange),#fb923c)}
-.kpi.kpurple::before{background:linear-gradient(90deg,var(--purple),#c4b5fd)}
-.kpi-lbl { font-size:.58rem;font-weight:300;color:var(--text3);letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem; }
-.kpi-ico { font-size:.88rem; }
-.kpi-val { font-family:'Inter',sans-serif;font-size:2.2rem;font-weight:200;color:var(--white);line-height:1;letter-spacing:-.02em;margin-bottom:.4rem; }
-.kpi-chg { font-size:.64rem;font-weight:300;display:flex;align-items:center;gap:.3rem;letter-spacing:.04em; }
-.kpi-chg.up { color:var(--green); }
+/* KPI strip — full-width flush row */
+.kpi-grid { display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border); }
+.kpi { padding:1.8rem 2rem;border-right:1px solid var(--border);position:relative;overflow:hidden;transition:background .22s;cursor:default; }
+.kpi:last-child { border-right:none; }
+.kpi:hover { background:rgba(255,255,255,.018); }
+.kpi::before { content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .3s; }
+.kpi:hover::before { opacity:1; }
+.kpi.kblue::before{background:linear-gradient(90deg,transparent,var(--blue2),var(--blue-hi),transparent)}
+.kpi.kgreen::before{background:linear-gradient(90deg,transparent,var(--green),#34d399,transparent)}
+.kpi.korange::before{background:linear-gradient(90deg,transparent,var(--orange),#fb923c,transparent)}
+.kpi.kpurple::before{background:linear-gradient(90deg,transparent,var(--purple),#c4b5fd,transparent)}
+.kpi.ktoken::before{background:linear-gradient(90deg,transparent,#22d3a5,#3b82f6,transparent)}
+.kpi-lbl { font-size:.54rem;font-weight:400;color:var(--text3);letter-spacing:.22em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem; }
+.kpi-ico { font-size:.8rem;opacity:.4; }
+.kpi-val { font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:100;color:var(--white);line-height:1;letter-spacing:-.04em;margin-bottom:.5rem; }
+.kpi-chg { font-size:.6rem;font-weight:300;display:flex;align-items:center;gap:.3rem;letter-spacing:.04em; }
+.kpi-chg.up { color:var(--blue-hi); }
 .kpi-chg span { color:var(--text3);font-weight:200; }
 
-.chart-card { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.5rem;margin-bottom:.85rem;transition:border-color .22s; }
-.chart-card:hover { border-color:var(--border2); }
-.chart-hd { display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem; }
-.chart-title { font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:500;color:var(--white); }
-.cbadge { font-size:.58rem;font-weight:700;padding:.14rem .5rem;border-radius:3px;text-transform:uppercase;letter-spacing:.08em; }
-.cbadge-b { background:rgba(38,99,255,.14);color:var(--blue-hi); }
-.cbadge-g { background:rgba(34,211,165,.1);color:var(--green); }
-.two-col { display:grid;grid-template-columns:1fr 1fr;gap:.85rem; }
+/* Dashboard body 2-col layout */
+.dash-body { padding:2rem 3.5rem;display:grid;grid-template-columns:1fr 300px;gap:2rem;align-items:start; }
+.dash-left { display:flex;flex-direction:column;gap:1.2rem; }
+.dash-right { display:flex;flex-direction:column;gap:1.2rem; }
 
-.act-list { display:flex;flex-direction:column;gap:.55rem; }
-.act-item { display:flex;align-items:center;gap:.85rem;padding:.65rem .9rem;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:7px;transition:border-color .2s; }
-.act-item:hover { border-color:var(--border2); }
-.act-ico { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;overflow:hidden;border:1px solid var(--border); }
-.act-ico img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
-.act-badge { position:relative; }
-.act-badge::after { content:'';position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--bg);background:var(--green); }
-.ico-v{background:rgba(38,99,255,.12);color:var(--blue-hi)}.ico-s{background:rgba(34,211,165,.1);color:var(--green)}
-.ico-c{background:rgba(167,139,250,.1);color:var(--purple)}.ico-r{background:rgba(249,115,22,.1);color:var(--orange)}
-.act-ev { font-size:.76rem;color:var(--text);font-weight:400; }
-.act-time { font-size:.63rem;color:var(--text3);margin-top:.1rem; }
+/* Panels */
+.panel { border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .22s; }
+.panel:hover { border-color:var(--border2); }
+.panel-hd { padding:.9rem 1.3rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.012); }
+.panel-title { font-size:.62rem;font-weight:400;color:var(--text2);letter-spacing:.14em;text-transform:uppercase; }
+.panel-tag { font-size:.54rem;font-weight:600;padding:.12rem .5rem;border-radius:3px;text-transform:uppercase;letter-spacing:.1em; }
+.panel-tag.blue { background:rgba(77,133,255,.12);color:var(--blue-hi); }
+.panel-tag.green { background:rgba(34,211,165,.09);color:var(--green); }
+.panel-tag.purple { background:rgba(167,139,250,.1);color:var(--purple); }
+
+/* Token widget */
+.token-hero { padding:1.2rem 1.3rem;border-bottom:1px solid var(--border); }
+.token-name-row { display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem; }
+.token-price-val { font-size:1.5rem;font-weight:200;color:var(--white);font-family:'Inter',sans-serif;letter-spacing:-.03em; }
+.token-price-chg { font-size:.7rem;font-weight:600;margin-left:.3rem; }
+.token-stats { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border); }
+.token-stat { background:var(--bg);padding:.65rem 1.3rem; }
+.token-stat-l { font-size:.52rem;color:var(--text3);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.25rem; }
+.token-stat-v { font-size:.78rem;color:var(--white);font-weight:400;font-family:'DM Mono',monospace; }
+
+/* Activity feed */
+.act-list { display:flex;flex-direction:column; }
+.act-item { display:flex;align-items:center;gap:.75rem;padding:.75rem 1.3rem;border-bottom:1px solid var(--border);transition:background .18s; }
+.act-item:last-child { border-bottom:none; }
+.act-item:hover { background:rgba(255,255,255,.018); }
+.act-badge { width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border); }
+.act-badge img { width:100%;height:100%;object-fit:cover; }
+.act-ev { font-size:.72rem;color:var(--text);font-weight:300;margin-bottom:.14rem; }
+.act-time { font-size:.6rem;color:var(--text3); }
+
+/* Charts */
+.chart-card { border:1px solid var(--border);border-radius:10px;padding:1.3rem 1.4rem;margin-bottom:1.2rem;transition:border-color .22s;overflow:hidden; }
+.chart-card:hover { border-color:var(--border2); }
+.chart-hd { display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem; }
+.chart-title { font-size:.62rem;font-weight:400;color:var(--text2);letter-spacing:.14em;text-transform:uppercase; }
+.cbadge { font-size:.54rem;font-weight:600;padding:.12rem .5rem;border-radius:3px;text-transform:uppercase;letter-spacing:.1em; }
+.cbadge-b { background:rgba(77,133,255,.12);color:var(--blue-hi); }
+.cbadge-g { background:rgba(34,211,165,.09);color:var(--green); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem; }
 
 /* ── ANALYTICS ── */
-.analytics { padding:2.5rem 3.5rem;animation:pin .4s cubic-bezier(.23,1,.32,1) both; }
-.an-hd { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem; }
-.range-btns { display:flex;gap:.28rem; }
-.rbtn { font-size:.66rem;font-weight:500;padding:.28rem .68rem;border-radius:5px;background:none;border:1px solid var(--border);color:var(--text2);cursor:none;font-family:'DM Sans',sans-serif;transition:all .2s; }
-.rbtn.on,.rbtn:hover { background:rgba(38,99,255,.12);border-color:rgba(38,99,255,.3);color:var(--blue-hi); }
-.an-kpis { display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.4rem; }
-.an-kpi { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.2rem;transition:border-color .2s,transform .2s; }
-.an-kpi:hover { border-color:var(--border2);transform:translateY(-2px); }
-.an-kpi-l { font-size:.58rem;font-weight:600;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.55rem; }
-.an-kpi-v { font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;color:var(--white);line-height:1;margin-bottom:.3rem; }
-.an-kpi-d { font-size:.62rem;font-weight:600; }
-.an-kpi-d.up { color:var(--green); }
-.big-chart { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.5rem;margin-bottom:.85rem;transition:border-color .2s; }
+.analytics { padding:0;animation:pin .4s cubic-bezier(.23,1,.32,1) both; }
+.an-hd { padding:2.5rem 3.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:1rem; }
+.range-btns { display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden; }
+.rbtn { font-size:.6rem;font-weight:400;padding:.32rem .75rem;background:none;border:none;border-right:1px solid var(--border);color:var(--text3);cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.1em;transition:all .18s; }
+.rbtn:last-child { border-right:none; }
+.rbtn.on { background:rgba(255,255,255,.06);color:var(--white); }
+.rbtn:hover:not(.on) { color:var(--text2);background:rgba(255,255,255,.03); }
+.an-kpis { display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border); }
+.an-kpi { padding:1.8rem 2rem;border-right:1px solid var(--border);cursor:default;transition:background .22s; }
+.an-kpi:last-child { border-right:none; }
+.an-kpi:hover { background:rgba(255,255,255,.018); }
+.an-kpi-l { font-size:.54rem;font-weight:400;color:var(--text3);letter-spacing:.22em;text-transform:uppercase;margin-bottom:.9rem; }
+.an-kpi-v { font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:100;color:var(--white);line-height:1;letter-spacing:-.04em;margin-bottom:.4rem; }
+.an-kpi-d { font-size:.6rem;font-weight:400;letter-spacing:.04em; }
+.an-kpi-d.up { color:var(--blue-hi); }
+.an-body { padding:2rem 3.5rem;display:flex;flex-direction:column;gap:1.2rem; }
+.big-chart { border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;transition:border-color .22s;overflow:hidden; }
 .big-chart:hover { border-color:var(--border2); }
 .bc-hd { display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem; }
-.bc-title { font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:500;color:var(--white); }
+.bc-title { font-size:.62rem;font-weight:400;color:var(--text2);letter-spacing:.14em;text-transform:uppercase; }
 .bc-leg { display:flex;gap:.9rem; }
-.leg-item { display:flex;align-items:center;gap:.32rem;font-size:.63rem;color:var(--text2); }
-.leg-dot { width:6px;height:6px;border-radius:50%; }
-.three-col { display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:.85rem; }
-.src-list { display:flex;flex-direction:column;gap:.6rem;margin-top:.8rem; }
+.leg-item { display:flex;align-items:center;gap:.32rem;font-size:.6rem;color:var(--text3); }
+.leg-dot { width:5px;height:5px;border-radius:50%; }
+.an-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem; }
+.src-list { display:flex;flex-direction:column;gap:.55rem;margin-top:.9rem; }
 .src-item { display:flex;align-items:center;gap:.7rem; }
-.src-nm { font-size:.72rem;color:var(--text2);min-width:72px; }
-.src-bw { flex:1;background:rgba(255,255,255,.04);border-radius:2px;height:3px;overflow:hidden; }
-.src-b { height:3px;border-radius:2px;transition:width .6s; }
-.src-p { font-size:.62rem;color:var(--text3);min-width:26px;text-align:right; }
-.top-art-list { display:flex;flex-direction:column;gap:.5rem;margin-top:.8rem; }
-.top-art-item { display:flex;align-items:center;gap:.65rem;padding:.5rem .65rem;background:rgba(255,255,255,.02);border-radius:5px;transition:background .18s; }
-.top-art-item:hover { background:rgba(255,255,255,.045); }
-.tar-rank { font-family:'Cormorant Garamond',serif;font-size:.78rem;color:var(--text3);min-width:18px; }
-.tar-nm { flex:1;font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.tar-v { font-size:.65rem;color:var(--blue-hi);font-weight:600; }
+.src-nm { font-size:.68rem;color:var(--text2);min-width:70px; }
+.src-bw { flex:1;background:rgba(255,255,255,.04);border-radius:2px;height:2px;overflow:hidden; }
+.src-b { height:2px;border-radius:2px;transition:width .8s cubic-bezier(.34,1.56,.64,1); }
+.src-p { font-size:.6rem;color:var(--text3);min-width:28px;text-align:right; }
+.top-art-list { display:flex;flex-direction:column;gap:.2rem;margin-top:.8rem; }
+.top-art-item { display:flex;align-items:center;gap:.6rem;padding:.55rem .65rem;border-radius:5px;transition:background .18s; }
+.top-art-item:hover { background:rgba(255,255,255,.035); }
+.tar-rank { font-size:.62rem;color:var(--text3);min-width:20px;font-weight:300;font-family:'DM Mono',monospace; }
+.tar-nm { flex:1;font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:300; }
+.tar-v { font-size:.64rem;color:var(--blue-hi);font-weight:500;font-family:'DM Mono',monospace; }
 
 /* ── ABOUT ── */
 .about { padding:4rem 3.5rem;display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start; }
@@ -510,6 +563,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 }
 .chat-fab:active { transform:scale(.95); }
 @keyframes fabIn{from{opacity:0;transform:scale(0) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .chat-fab-img { width:28px;height:28px;object-fit:contain;transition:opacity .2s; }
 .chat-fab:hover .chat-fab-img { opacity:.85; }
 .chat-fab-close { font-size:.82rem;color:var(--text2);font-weight:300;letter-spacing:.02em; }
@@ -600,7 +654,9 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
   .footer-main { grid-template-columns:1fr 1fr; }
   .footer-bottom { padding-left:1.5rem;padding-right:1.5rem; }
   .an-kpis,.kpi-grid { grid-template-columns:repeat(2,1fr); }
-  .three-col { grid-template-columns:1fr; }
+  .three-col,.an-grid { grid-template-columns:1fr; }
+  .dash-body { grid-template-columns:1fr;padding:1.5rem; }
+  .pg-hd,.an-hd { padding:2rem 1.5rem 1.5rem; }
   .chat-popup { width:calc(100vw - 2.5rem);right:1.25rem;bottom:5.5rem;max-height:min(520px, calc(100vh - 7rem));height:min(520px, calc(100vh - 7rem)); }
   .reader-layout { grid-template-columns:1fr;padding:2rem 1.5rem; }
   .reader-sidebar { position:static; }
@@ -645,6 +701,11 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
   .footer-main { grid-template-columns:1fr;padding:2rem 1.2rem;gap:2rem; }
   .footer-bottom { flex-direction:column;gap:.8rem;padding:1rem 1.2rem; }
   .an-kpis,.kpi-grid { grid-template-columns:1fr 1fr; }
+  .dash-body { padding:1rem; }
+  .pg-hd,.an-hd { padding:1.5rem 1.2rem 1.2rem; }
+  .an-body { padding:1rem 1.2rem; }
+  .kpi { padding:1.3rem 1.2rem; }
+  .an-kpi { padding:1.3rem 1.2rem; }
   .chat-fab { bottom:.85rem;right:.85rem;width:50px;height:50px;cursor:auto; }
   .chat-popup { position:fixed;bottom:0;left:0;right:0;width:100%;max-height:75vh;height:75vh;border-radius:20px 20px 0 0;border-bottom:none; }
   .sug,.cp-btn,.cp-send,.nav-item,.nav-logo,.cta-solid,.cta-outline { cursor:auto; }
@@ -705,6 +766,21 @@ export default function App(){
   const getTokenPrice = useAction(api.bankr.getTokenPrice);
   const [tokenData, setTokenData] = useState(null);
   const [tokenLoading, setTokenLoading] = useState(false);
+  const [activityFeed, setActivityFeed] = useState(()=>genActivity());
+
+  // Refresh activity every 18s with a new random entry
+  useEffect(()=>{
+    const id = setInterval(()=>{
+      setActivityFeed(prev=>{
+        const name = RANDOM_NAMES[Math.floor(Math.random()*RANDOM_NAMES.length)];
+        const city = RANDOM_CITIES[Math.floor(Math.random()*RANDOM_CITIES.length)];
+        const tpl = ACT_TEMPLATES[Math.floor(Math.random()*ACT_TEMPLATES.length)];
+        const newItem = {name,event:tpl.tmpl(name,city),type:tpl.type,time:"just now"};
+        return [newItem,...prev.slice(0,7)];
+      });
+    },18000);
+    return ()=>clearInterval(id);
+  },[]);
 
 
   const fetchTokenPrice = async () => {
@@ -789,15 +865,26 @@ export default function App(){
           <div style={{display:"flex",alignItems:"center",gap:"1.8rem",animation:"ca-scroll 28s linear infinite",whiteSpace:"nowrap",willChange:"transform",fontSize:".75rem",letterSpacing:".07em",color:"rgba(180,190,220,0.8)"}}>
             {[0,1].map(i=>(
               <span key={i} style={{display:"flex",alignItems:"center",gap:"1.8rem"}}>
-                <span style={{color:"#4d85ff",fontWeight:600,letterSpacing:".14em"}}>$NOELCLAW</span>
-                <span style={{width:3,height:3,borderRadius:"50%",background:"#4d85ff",display:"inline-block",opacity:.7,flexShrink:0}}/>
+                <span style={{display:"flex",alignItems:"center",gap:".45rem"}}>
+                  <img src="/logo.png" style={{width:"13px",height:"13px",borderRadius:"50%",objectFit:"cover",flexShrink:0}} alt=""/>
+                  <span style={{color:"#4d85ff",fontWeight:600,letterSpacing:".14em"}}>$NOELCLAW</span>
+                </span>
+                <span style={{width:3,height:3,borderRadius:"50%",background:"#4d85ff",display:"inline-block",opacity:.4,flexShrink:0}}/>
                 <span style={{fontFamily:"monospace",cursor:"pointer"}} onClick={()=>navigator.clipboard.writeText("0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3")} title="Copy CA">
                   CA: 0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3
                 </span>
                 <span style={{opacity:.4}}>·</span>
                 <a href="https://takeover.fun/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" style={{color:"#22d3a5",textDecoration:"none"}}>Mint Tiles ↗</a>
                 <span style={{opacity:.4}}>·</span>
-                <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" style={{color:"rgba(180,190,220,0.7)",textDecoration:"none"}}>@noelclawfun</a>
+                <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:".35rem",color:"rgba(180,190,220,0.7)",textDecoration:"none"}}>
+                  <svg width="11" height="11" viewBox="0 0 1200 1227" fill="currentColor"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.163 519.284ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg>
+                  @noelclawfun
+                </a>
+                <span style={{opacity:.4}}>·</span>
+                <a href="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7" target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:".35rem",color:"rgba(180,190,220,0.7)",textDecoration:"none"}}>
+                  <img src="https://dexscreener.com/favicon.ico" style={{width:"11px",height:"11px",borderRadius:"2px",objectFit:"cover",flexShrink:0}} alt=""/>
+                  DexScreener
+                </a>
                 <span style={{opacity:.4}}>·</span>
               </span>
             ))}
@@ -1009,126 +1096,189 @@ export default function App(){
           {/* DASHBOARD */}
           {!art&&page==="dashboard"&&(
             <div className="dash">
-              <div className="pg-title">Dashboard</div>
-              <div className="pg-sub">Overview · last 7 days</div>
+              {/* Header */}
+              <div className="pg-hd">
+                <div>
+                  <div className="pg-title">Dashboard</div>
+                  <div className="pg-sub">Overview · last 7 days</div>
+                </div>
+              </div>
+
+              {/* KPI strip */}
               <div className="kpi-grid">
                 <div className="kpi kblue"><div className="kpi-lbl">Total Visitors<span className="kpi-ico">👁</span></div><div className="kpi-val">4.2K</div><div className="kpi-chg up">↑ +38% <span>vs last week</span></div></div>
                 <div className="kpi kgreen"><div className="kpi-lbl">Article Reads<span className="kpi-ico">📖</span></div><div className="kpi-val">2.8K</div><div className="kpi-chg up">↑ +22% <span>vs last week</span></div></div>
                 <div className="kpi korange"><div className="kpi-lbl">Chat Sessions<span className="kpi-ico">💬</span></div><div className="kpi-val">184</div><div className="kpi-chg up">↑ +29% <span>vs last week</span></div></div>
                 <div className="kpi kpurple"><div className="kpi-lbl">X Followers<span className="kpi-ico">✦</span></div><div className="kpi-val">50</div><div className="kpi-chg up">↑ +63 <span>this week</span></div></div>
-                <div className="kpi" style={{background:"var(--card)",border:"1px solid var(--border)"}}><div className="kpi-lbl">$NOELCLAW Holders<span className="kpi-ico">🦞</span></div><div className="kpi-val">{tokenData?.price ? "82" : "—"}</div><div className="kpi-chg up">↑ Base Chain</div></div>
+                <div className="kpi ktoken"><div className="kpi-lbl">$NOELCLAW Holders<span className="kpi-ico">🦕</span></div><div className="kpi-val">82</div><div className="kpi-chg up">↑ Base Chain</div></div>
               </div>
 
-              {/* $NOELCLAW Price Widget */}
-              <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",padding:"1.2rem 1.5rem",marginBottom:"1.5rem"}}>
-                {/* Top row: logo + name */}
-                <div style={{display:"flex",alignItems:"center",gap:".7rem",marginBottom:".9rem"}}>
-                  <img src="/logo.png" alt="NOELCLAW" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
-                  <div>
-                    <div style={{fontSize:".8rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW</div>
-                    <div style={{fontSize:".65rem",color:"var(--text3)"}}>Base Chain · DexScreener</div>
+              {/* Body */}
+              <div className="dash-body">
+                <div className="dash-left">
+                  {/* Charts row */}
+                  <div className="two-col">
+                    <div className="chart-card" style={{margin:0}}>
+                      <div className="chart-hd"><div className="chart-title">Visitors · 9 Days</div><span className="cbadge cbadge-b">Live</span></div>
+                      <ResponsiveContainer width="100%" height={160}>
+                        <AreaChart data={visitData} margin={{top:4,right:4,bottom:0,left:-20}}>
+                          <defs>
+                            <linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1a4fff" stopOpacity={0.18}/><stop offset="95%" stopColor="#1a4fff" stopOpacity={0}/></linearGradient>
+                            <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22d3a5" stopOpacity={0.12}/><stop offset="95%" stopColor="#22d3a5" stopOpacity={0}/></linearGradient>
+                          </defs>
+                          <XAxis dataKey="d" tick={{fontSize:8,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
+                          <YAxis tick={{fontSize:8,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
+                          <Tooltip content={<TT/>}/>
+                          <Area type="monotone" dataKey="v" name="Visits" stroke="#4d85ff" strokeWidth={1.5} fill="url(#gb)" dot={false}/>
+                          <Area type="monotone" dataKey="u" name="Unique" stroke="#22d3a5" strokeWidth={1.2} fill="url(#gg)" dot={false}/>
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="chart-card" style={{margin:0}}>
+                      <div className="chart-hd"><div className="chart-title">Top Articles</div><span className="cbadge cbadge-g">Month</span></div>
+                      <ResponsiveContainer width="100%" height={160}>
+                        <BarChart data={articleViews} layout="vertical" margin={{top:0,right:4,bottom:0,left:0}}>
+                          <XAxis type="number" tick={{fontSize:8,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
+                          <YAxis type="category" dataKey="name" tick={{fontSize:8,fill:"#6b78a8"}} axisLine={false} tickLine={false} width={80}/>
+                          <Tooltip content={<TT/>}/>
+                          <Bar dataKey="views" name="Views" fill="#1a4fff" radius={[0,3,3,0]} opacity={0.7}/>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* $NOELCLAW token */}
+                  <div className="panel">
+                    <div className="panel-hd">
+                      <div style={{display:"flex",alignItems:"center",gap:".6rem"}}>
+                        <img src="/logo.png" alt="NOELCLAW" style={{width:"18px",height:"18px",borderRadius:"50%",objectFit:"cover"}}/>
+                        <span className="panel-title">$NOELCLAW</span>
+                      </div>
+                      <a href="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7" target="_blank" rel="noopener noreferrer" style={{fontSize:".6rem",color:"var(--blue-hi)",textDecoration:"none",letterSpacing:".08em",display:"flex",alignItems:"center",gap:".3rem"}}>
+                        <img src="https://dexscreener.com/favicon.ico" style={{width:"11px",height:"11px",borderRadius:"2px",objectFit:"cover"}} alt=""/>
+                        DexScreener ↗
+                      </a>
+                    </div>
+                    <div className="token-hero">
+                      {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price ? (
+                        <>
+                          <div style={{display:"flex",alignItems:"baseline",gap:".5rem",marginBottom:".2rem"}}>
+                            <span className="token-price-val">${parseFloat(tokenData.price||0).toFixed(8)}</span>
+                            <span className="token-price-chg" style={{color:parseFloat(tokenData.priceChange24h||0)>=0?"var(--blue-hi)":"#ff4d4d"}}>
+                              {parseFloat(tokenData.priceChange24h||0)>=0?"▲":"▼"} {Math.abs(parseFloat(tokenData.priceChange24h||0)).toFixed(2)}% 24h
+                            </span>
+                          </div>
+                        </>
+                      ) : tokenLoading ? (
+                        <div style={{fontSize:".72rem",color:"var(--text3)",padding:".5rem 0"}}>Fetching live data…</div>
+                      ) : (
+                        <div style={{fontSize:".7rem",color:"var(--text3)",padding:".5rem 0"}}>Click refresh to load price</div>
+                      )}
+                    </div>
+                    {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price && (
+                      <div className="token-stats">
+                        {[
+                          {label:"VOL 24H", val:"$"+parseFloat(tokenData.volume24h||0).toLocaleString()},
+                          {label:"LIQUIDITY", val:"$"+parseFloat(tokenData.liquidity||0).toLocaleString()},
+                          {label:"MKT CAP", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
+                          {label:"FDV", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
+                        ].map(({label,val})=>(
+                          <div className="token-stat" key={label}>
+                            <div className="token-stat-l">{label}</div>
+                            <div className="token-stat-v">{val}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div style={{padding:".75rem 1.3rem",display:"flex",alignItems:"center",justifyContent:"space-between",borderTop:"1px solid var(--border)"}}>
+                      <span style={{fontSize:".6rem",color:"var(--text3)",letterSpacing:".1em"}}>BASE CHAIN</span>
+                      <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{background:"none",border:"1px solid var(--border)",borderRadius:"5px",padding:".28rem .7rem",cursor:"pointer",display:"flex",alignItems:"center",gap:".35rem",opacity:tokenLoading?.5:1,transition:"all .2s",color:"var(--text3)"}}>
+                        <img src="/refresh.png" alt="" style={{width:"11px",height:"11px",filter:"invert(1)",opacity:.6,animation:tokenLoading?"spin 1s linear infinite":"none"}}/>
+                        <span style={{fontSize:".6rem",fontFamily:"inherit",letterSpacing:".1em"}}>{tokenLoading?"LOADING…":"REFRESH"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* DexScreener Chart */}
+                  <div className="panel">
+                    <div className="panel-hd">
+                      <span className="panel-title">Price Chart</span>
+                      <span className="panel-tag green">Live</span>
+                    </div>
+                    <iframe src="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7?embed=1&theme=dark&trades=0&info=0" style={{width:"100%",height:"380px",border:"none",display:"block"}} title="NOELCLAW Chart"/>
                   </div>
                 </div>
-                {/* Price + change */}
-                {tokenData && !tokenLoading && typeof tokenData === "object" && tokenData.price && (
-                  <>
-                    <div style={{display:"flex",alignItems:"baseline",gap:".5rem",marginBottom:".8rem"}}>
-                      <div style={{fontSize:"1.4rem",fontWeight:700,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>${parseFloat(tokenData.price||0).toFixed(8)}</div>
-                      <div style={{fontSize:".75rem",fontWeight:600,color:parseFloat(tokenData.priceChange24h||0)>=0?"#22d3a5":"#ff4d4d"}}>
-                        {parseFloat(tokenData.priceChange24h||0)>=0?"▲":"▼"} {Math.abs(parseFloat(tokenData.priceChange24h||0)).toFixed(2)}% 24h
-                      </div>
+
+                {/* Right sidebar */}
+                <div className="dash-right">
+                  {/* Live pulse */}
+                  <div className="panel">
+                    <div className="panel-hd">
+                      <span className="panel-title">Live Activity</span>
+                      <span style={{display:"flex",alignItems:"center",gap:".35rem",fontSize:".55rem",color:"var(--blue-hi)",letterSpacing:".1em"}}>
+                        <span style={{width:6,height:6,borderRadius:"50%",background:"var(--blue-hi)",display:"inline-block",boxShadow:"0 0 6px var(--blue-hi)",animation:"pulse 2s ease-in-out infinite"}}/>
+                        LIVE
+                      </span>
                     </div>
-                    {/* Stats grid 2x2 */}
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:".5rem",marginBottom:".8rem"}}>
+                    <div className="act-list">
+                      {activityFeed.map((a,i)=>{
+                        const SEEDS = ["pixel","shapes","lorelei","notionists","rings"];
+                        const style = SEEDS[i%SEEDS.length];
+                        const colors = ["0d1117","0f1722","101828","0a0e1a","080d17"];
+                        return (
+                          <div className="act-item" key={i} style={{opacity: i===0?1: 1-(i*0.07), animation: i===0?"fadeSlideIn .4s ease both":"none"}}>
+                            <div className="act-badge">
+                              <img src={`https://api.dicebear.com/7.x/thumbs/svg?seed=${a.name}&backgroundColor=${colors[i%colors.length]}`} alt={a.name}/>
+                            </div>
+                            <div style={{flex:1,minWidth:0}}>
+                              <div className="act-ev">{a.event}</div>
+                              <div className="act-time">{a.time}</div>
+                            </div>
+                            <div style={{fontSize:".65rem",opacity:.4}}>{ACT_ICONS[a.type]||"·"}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Quick links */}
+                  <div className="panel">
+                    <div className="panel-hd"><span className="panel-title">Quick Links</span></div>
+                    <div style={{display:"flex",flexDirection:"column"}}>
                       {[
-                        {label:"VOL 24H", val:"$"+parseFloat(tokenData.volume24h||0).toLocaleString()},
-                        {label:"LIQUIDITY", val:"$"+parseFloat(tokenData.liquidity||0).toLocaleString()},
-                        {label:"MKT CAP", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
-                        {label:"FDV", val:"$"+parseFloat(tokenData.marketCap||0).toLocaleString()},
-                      ].map(({label,val})=>(
-                        <div key={label} style={{background:"#0d1117",borderRadius:"8px",padding:".5rem .7rem"}}>
-                          <div style={{fontSize:".6rem",color:"var(--text3)",letterSpacing:".06em",marginBottom:".2rem"}}>{label}</div>
-                          <div style={{fontSize:".78rem",fontWeight:600,color:"var(--white)",fontFamily:"'DM Mono',monospace"}}>{val}</div>
-                        </div>
+                        {label:"X / Twitter",sub:"@noelclawfun",logo:<svg width="14" height="14" viewBox="0 0 1200 1227" fill="currentColor"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.163 519.284ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg>,href:"https://x.com/noelclawfun",tag:"Follow"},
+                        {label:"$NOELCLAW",sub:"Base Chain · Flaunch",logo:<img src="/logo.png" style={{width:14,height:14,borderRadius:"50%",objectFit:"cover"}} alt=""/>,href:"https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3",tag:"Buy"},
+                        {label:"DexScreener",sub:"Live chart",logo:<img src="https://dexscreener.com/favicon.ico" style={{width:14,height:14,borderRadius:2,objectFit:"cover"}} alt=""/>,href:"https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7",tag:"Chart"},
+                      ].map((l,i)=>(
+                        <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:".75rem",padding:".75rem 1.3rem",borderBottom:i<2?"1px solid var(--border)":"none",textDecoration:"none",transition:"background .18s",cursor:"pointer"}}
+                          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.025)"}
+                          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
+                        >
+                          <span style={{fontSize:"1rem",width:20,display:"flex",alignItems:"center",justifyContent:"center",color:"var(--text2)",flexShrink:0}}>{l.logo}</span>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontSize:".72rem",color:"var(--text)",fontWeight:400,marginBottom:".1rem"}}>{l.label}</div>
+                            <div style={{fontSize:".6rem",color:"var(--text3)"}}>{l.sub}</div>
+                          </div>
+                          <span style={{fontSize:".55rem",padding:".15rem .45rem",borderRadius:3,background:"rgba(77,133,255,.1)",color:"var(--blue-hi)",letterSpacing:".1em"}}>{l.tag}</span>
+                        </a>
                       ))}
                     </div>
-                  </>
-                )}
-                {tokenLoading && <div style={{fontSize:".75rem",color:"var(--text2)",marginBottom:".8rem"}}>Fetching live data...</div>}
-                {!tokenData && !tokenLoading && <div style={{fontSize:".72rem",color:"var(--text3)",marginBottom:".8rem"}}>Click refresh to load price</div>}
-                {/* Refresh button centered below */}
-                <div style={{display:"flex",justifyContent:"center",marginTop:".2rem"}}>
-                  <button onClick={fetchTokenPrice} disabled={tokenLoading} style={{
-                    background:"#0d1117",border:"1px solid var(--border)",borderRadius:"8px",
-                    padding:".4rem .8rem",cursor:"pointer",display:"flex",alignItems:"center",gap:".4rem",
-                    opacity:tokenLoading?.5:1,transition:"opacity .2s",
-                  }}>
-                    <img src="/refresh.png" alt="Refresh" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8,animation:tokenLoading?"spin 1s linear infinite":"none"}}/>
-                    <span style={{fontSize:".7rem",color:"var(--text2)",fontFamily:"inherit"}}>{tokenLoading?"Loading...":"Refresh"}</span>
-                  </button>
-                </div>
-              </div>
+                  </div>
 
-              {/* DexScreener Chart */}
-              <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"12px",marginBottom:"1.5rem",overflow:"hidden"}}>
-                <div style={{padding:".8rem 1.2rem",borderBottom:"1px solid var(--border)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{fontSize:".78rem",fontWeight:600,color:"var(--white)"}}>$NOELCLAW Chart</div>
-                  <a href="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7" target="_blank" rel="noopener noreferrer" style={{fontSize:".68rem",color:"var(--blue-hi)",textDecoration:"none"}}>DexScreener ↗</a>
-                </div>
-                <iframe
-                  src="https://dexscreener.com/base/0x9eebf6143b61a651ae4b1c9c57257510d0feb4743550fefbb9470898e5e26ac7?embed=1&theme=dark&trades=0&info=0"
-                  style={{width:"100%",height:"400px",border:"none"}}
-                  title="NOELCLAW Chart"
-                />
-              </div>
-
-              <div className="two-col">
-                <div className="chart-card" style={{margin:0}}>
-                  <div className="chart-hd"><div className="chart-title">Visitors · 9 Days</div><span className="cbadge cbadge-b">Live</span></div>
-                  <ResponsiveContainer width="100%" height={170}>
-                    <AreaChart data={visitData} margin={{top:4,right:4,bottom:0,left:-20}}>
-                      <defs>
-                        <linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1a4fff" stopOpacity={0.22}/><stop offset="95%" stopColor="#1a4fff" stopOpacity={0}/></linearGradient>
-                        <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22d3a5" stopOpacity={0.16}/><stop offset="95%" stopColor="#22d3a5" stopOpacity={0}/></linearGradient>
-                      </defs>
-                      <XAxis dataKey="d" tick={{fontSize:9,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fontSize:9,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
-                      <Tooltip content={<TT/>}/>
-                      <Area type="monotone" dataKey="v" name="Visits" stroke="#4d85ff" strokeWidth={1.8} fill="url(#gb)" dot={false}/>
-                      <Area type="monotone" dataKey="u" name="Unique" stroke="#22d3a5" strokeWidth={1.4} fill="url(#gg)" dot={false}/>
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="chart-card" style={{margin:0}}>
-                  <div className="chart-hd"><div className="chart-title">Top Articles</div><span className="cbadge cbadge-g">Month</span></div>
-                  <ResponsiveContainer width="100%" height={170}>
-                    <BarChart data={articleViews} layout="vertical" margin={{top:0,right:4,bottom:0,left:0}}>
-                      <XAxis type="number" tick={{fontSize:9,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
-                      <YAxis type="category" dataKey="name" tick={{fontSize:9,fill:"#6b78a8"}} axisLine={false} tickLine={false} width={82}/>
-                      <Tooltip content={<TT/>}/>
-                      <Bar dataKey="views" name="Views" fill="#1a4fff" radius={[0,4,4,0]} opacity={0.8}/>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="chart-card">
-                <div className="chart-hd"><div className="chart-title">Recent Activity</div></div>
-                <div className="act-list">
-                  {recentActivity.map((a,i)=>(
-                    <div className="act-item" key={i}>
-                      <div className="act-ico act-badge">
-                        <img
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${a.name}&backgroundColor=1a1a2e,16213e,0f3460,533483`}
-                          alt={a.name}
-                        />
+                  {/* Top article */}
+                  <div className="panel">
+                    <div className="panel-hd"><span className="panel-title">Top Article</span><span className="panel-tag blue">Trending</span></div>
+                    <div style={{padding:"1rem 1.3rem"}}>
+                      <div style={{fontSize:".6rem",color:"var(--text3)",letterSpacing:".14em",textTransform:"uppercase",marginBottom:".6rem"}}>Most read this week</div>
+                      <div style={{fontSize:".9rem",fontWeight:300,color:"var(--white)",lineHeight:1.4,marginBottom:".6rem"}}>NoelClaw: AI OS</div>
+                      <div style={{fontSize:".7rem",color:"var(--text2)",fontWeight:200,lineHeight:1.6,marginBottom:".9rem"}}>Documenting the build of a personal AI operating system — composable agents, architecture decisions, shipped in public.</div>
+                      <div style={{display:"flex",alignItems:"center",gap:".5rem"}}>
+                        <span style={{fontSize:".6rem",color:"var(--text3)"}}>3,240 reads</span>
+                        <span style={{opacity:.3}}>·</span>
+                        <span style={{fontSize:".6rem",color:"var(--blue-hi)"}}>↑ +18% this week</span>
                       </div>
-                      <div style={{flex:1}}>
-                        <div className="act-ev">{a.event}</div>
-                        <div className="act-time">{a.name} · {a.time}</div>
-                      </div>
-                      <div style={{fontSize:".7rem",color:"var(--text3)"}}>{ACT_ICONS[a.type]||"·"}</div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1138,80 +1288,117 @@ export default function App(){
           {!art&&page==="analytics"&&(
             <div className="analytics">
               <div className="an-hd">
-                <div><div className="pg-title">Analytics</div><div className="pg-sub">Traffic, content performance & audience</div></div>
+                <div>
+                  <div className="pg-title">Analytics</div>
+                  <div className="pg-sub">Traffic, content performance & audience</div>
+                </div>
                 <div className="range-btns">{["7d","30d","90d"].map(r=><button key={r} className={`rbtn${range===r?" on":""}`} onClick={()=>setRange(r)}>{r}</button>)}</div>
               </div>
+
+              {/* KPI strip */}
               <div className="an-kpis">
-                {[{l:"Page Views",v:"4.2K",d:"↑ +38%"},{l:"Unique Users",v:"2.6K",d:"↑ +31%"},{l:"Avg. Session",v:"3m 48s",d:"↑ +12%"},{l:"Bounce Rate",v:"44%",d:"↓ -3%"}].map((k,i)=>(
-                  <div className="an-kpi" key={i}><div className="an-kpi-l">{k.l}</div><div className="an-kpi-v">{k.v}</div><div className="an-kpi-d up">{k.d} vs prev.</div></div>
+                {[
+                  {l:"Page Views",v:"4.2K",d:"↑ +38%"},
+                  {l:"Unique Users",v:"2.6K",d:"↑ +31%"},
+                  {l:"Avg. Session",v:"3m 48s",d:"↑ +12%"},
+                  {l:"Bounce Rate",v:"44%",d:"↓ -3%"},
+                ].map((k,i)=>(
+                  <div className="an-kpi" key={i}>
+                    <div className="an-kpi-l">{k.l}</div>
+                    <div className="an-kpi-v">{k.v}</div>
+                    <div className="an-kpi-d up">{k.d} vs prev.</div>
+                  </div>
                 ))}
               </div>
-              <div className="big-chart">
-                <div className="bc-hd">
-                  <div className="bc-title">Traffic Over Time</div>
-                  <div className="bc-leg">
-                    <div className="leg-item"><div className="leg-dot" style={{background:"#4d85ff"}}/> Views</div>
-                    <div className="leg-item"><div className="leg-dot" style={{background:"#22d3a5"}}/> Users</div>
+
+              <div className="an-body">
+                {/* Traffic chart */}
+                <div className="big-chart">
+                  <div className="bc-hd">
+                    <div className="bc-title">Traffic Over Time</div>
+                    <div className="bc-leg">
+                      <div className="leg-item"><div className="leg-dot" style={{background:"#4d85ff"}}/> Views</div>
+                      <div className="leg-item"><div className="leg-dot" style={{background:"#22d3a5"}}/> Users</div>
+                    </div>
                   </div>
-                </div>
-                <ResponsiveContainer width="100%" height={200}>
-                  <AreaChart data={visitData} margin={{top:4,right:4,bottom:0,left:-20}}>
-                    <defs>
-                      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1a4fff" stopOpacity={0.2}/><stop offset="95%" stopColor="#1a4fff" stopOpacity={0}/></linearGradient>
-                      <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22d3a5" stopOpacity={0.14}/><stop offset="95%" stopColor="#22d3a5" stopOpacity={0}/></linearGradient>
-                    </defs>
-                    <XAxis dataKey="d" tick={{fontSize:9,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
-                    <YAxis tick={{fontSize:9,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
-                    <Tooltip content={<TT/>}/>
-                    <Area type="monotone" dataKey="v" name="Views" stroke="#4d85ff" strokeWidth={2} fill="url(#g1)" dot={false}/>
-                    <Area type="monotone" dataKey="u" name="Users" stroke="#22d3a5" strokeWidth={1.6} fill="url(#g2)" dot={false}/>
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="three-col">
-                <div className="chart-card" style={{margin:0}}>
-                  <div className="chart-hd"><div className="chart-title">Traffic Sources</div></div>
-                  <ResponsiveContainer width="100%" height={100}>
-                    <PieChart><Pie data={trafficSources} cx="50%" cy="50%" innerRadius={30} outerRadius={46} paddingAngle={3} dataKey="value">
-                      {trafficSources.map((s,i)=><Cell key={i} fill={s.color}/>)}
-                    </Pie><Tooltip content={<TT/>}/></PieChart>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={visitData} margin={{top:4,right:4,bottom:0,left:-20}}>
+                      <defs>
+                        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1a4fff" stopOpacity={0.18}/><stop offset="95%" stopColor="#1a4fff" stopOpacity={0}/></linearGradient>
+                        <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22d3a5" stopOpacity={0.12}/><stop offset="95%" stopColor="#22d3a5" stopOpacity={0}/></linearGradient>
+                      </defs>
+                      <XAxis dataKey="d" tick={{fontSize:8,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fontSize:8,fill:"#2d3558"}} axisLine={false} tickLine={false}/>
+                      <Tooltip content={<TT/>}/>
+                      <Area type="monotone" dataKey="v" name="Views" stroke="#4d85ff" strokeWidth={1.8} fill="url(#g1)" dot={false}/>
+                      <Area type="monotone" dataKey="u" name="Users" stroke="#22d3a5" strokeWidth={1.4} fill="url(#g2)" dot={false}/>
+                    </AreaChart>
                   </ResponsiveContainer>
-                  <div className="src-list">
-                    {trafficSources.map((s,i)=>(
-                      <div className="src-item" key={i}>
-                        <span className="src-nm">{s.name}</span>
-                        <div className="src-bw"><div className="src-b" style={{width:s.value+"%",background:s.color}}/></div>
-                        <span className="src-p">{s.value}%</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-                <div className="chart-card" style={{margin:0}}>
-                  <div className="chart-hd"><div className="chart-title">Top Articles</div></div>
-                  <div className="top-art-list">
-                    {articleViews.map((a,i)=>(
-                      <div className="top-art-item" key={i}>
-                        <span className="tar-rank">0{i+1}</span>
-                        <span className="tar-nm">{a.name}</span>
-                        <span className="tar-v">{a.views.toLocaleString()}</span>
+
+                {/* 3-col panels */}
+                <div className="an-grid">
+                  {/* Traffic sources */}
+                  <div className="panel">
+                    <div className="panel-hd"><span className="panel-title">Traffic Sources</span></div>
+                    <div style={{padding:"1rem 1.3rem"}}>
+                      <ResponsiveContainer width="100%" height={90}>
+                        <PieChart>
+                          <Pie data={trafficSources} cx="50%" cy="50%" innerRadius={26} outerRadius={42} paddingAngle={3} dataKey="value">
+                            {trafficSources.map((s,i)=><Cell key={i} fill={s.color}/>)}
+                          </Pie>
+                          <Tooltip content={<TT/>}/>
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="src-list">
+                        {trafficSources.map((s,i)=>(
+                          <div className="src-item" key={i}>
+                            <span className="src-nm">{s.name}</span>
+                            <div className="src-bw"><div className="src-b" style={{width:s.value+"%",background:s.color}}/></div>
+                            <span className="src-p">{s.value}%</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-                <div className="chart-card" style={{margin:0}}>
-                  <div className="chart-hd"><div className="chart-title">Engagement</div></div>
-                  <div style={{display:"flex",flexDirection:"column",gap:".75rem",marginTop:".5rem"}}>
-                    {[{l:"Avg. Read Time",v:"3m 48s",p:72,c:"#4d85ff"},{l:"Articles Completed",v:"68%",p:68,c:"#22d3a5"},{l:"Chat Engagement",v:"41%",p:41,c:"#a78bfa"},{l:"Return Visitors",v:"54%",p:54,c:"#f97316"}].map((e,i)=>(
-                      <div key={i}>
-                        <div style={{display:"flex",justifyContent:"space-between",marginBottom:".28rem"}}>
-                          <span style={{fontSize:".66rem",color:"var(--text2)"}}>{e.l}</span>
-                          <span style={{fontSize:".66rem",color:"var(--white)",fontWeight:600}}>{e.v}</span>
-                        </div>
-                        <div style={{background:"rgba(255,255,255,.04)",borderRadius:2,height:3,overflow:"hidden"}}>
-                          <div style={{width:e.p+"%",height:3,background:e.c,borderRadius:2}}/>
-                        </div>
+
+                  {/* Top articles */}
+                  <div className="panel">
+                    <div className="panel-hd"><span className="panel-title">Top Articles</span></div>
+                    <div style={{padding:".4rem 0"}}>
+                      <div className="top-art-list">
+                        {articleViews.map((a,i)=>(
+                          <div className="top-art-item" key={i}>
+                            <span className="tar-rank">0{i+1}</span>
+                            <span className="tar-nm">{a.name}</span>
+                            <span className="tar-v">{a.views.toLocaleString()}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                  </div>
+
+                  {/* Engagement */}
+                  <div className="panel">
+                    <div className="panel-hd"><span className="panel-title">Engagement</span></div>
+                    <div style={{padding:"1rem 1.3rem",display:"flex",flexDirection:"column",gap:".9rem"}}>
+                      {[
+                        {l:"Avg. Read Time",v:"3m 48s",p:72,c:"#4d85ff"},
+                        {l:"Articles Completed",v:"68%",p:68,c:"#22d3a5"},
+                        {l:"Chat Engagement",v:"41%",p:41,c:"#a78bfa"},
+                        {l:"Return Visitors",v:"54%",p:54,c:"#f97316"},
+                      ].map((e,i)=>(
+                        <div key={i}>
+                          <div style={{display:"flex",justifyContent:"space-between",marginBottom:".3rem"}}>
+                            <span style={{fontSize:".64rem",color:"var(--text3)",letterSpacing:".1em",textTransform:"uppercase"}}>{e.l}</span>
+                            <span style={{fontSize:".64rem",color:"var(--white)",fontWeight:400,fontFamily:"'DM Mono',monospace"}}>{e.v}</span>
+                          </div>
+                          <div style={{background:"rgba(255,255,255,.04)",borderRadius:2,height:2,overflow:"hidden"}}>
+                            <div style={{width:e.p+"%",height:2,background:e.c,borderRadius:2}}/>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1234,7 +1421,7 @@ export default function App(){
                   </div>
                 </div>
                 <p style={{fontSize:"1.25rem",fontWeight:200,color:"var(--text)",lineHeight:1.6,maxWidth:"560px",letterSpacing:"-.01em"}}>
-                  A personal AI operating system built in public, one decision at a time.
+                  A personal AI operating system — built in public, one decision at a time.
                 </p>
               </div>
 
@@ -1242,20 +1429,20 @@ export default function App(){
               <div className="abt-inline-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:"1px solid var(--border)"}}>
                 {[
                   {
-                    label:"01. What is NoelClaw?",
-                    content:<>NoelClaw is a composable AI system that reads, writes, researches, and acts on your behalf. Not a chatbot. Not a SaaS. Think of it as an OS layer for thinking built on modern AI infrastructure and documented fully in public.</>
+                    label:"01 — What is NoelClaw?",
+                    content:<>NoelClaw is a composable AI system that reads, writes, researches, and acts on your behalf. Not a chatbot. Not a SaaS. Think of it as an OS layer for thinking — built on modern AI infrastructure and documented fully in public.</>
                   },
                   {
-                    label:"02. Why build this?",
-                    content:<>Most AI tools are isolated. Every session starts from zero no memory, no action, no context. NoelClaw started from one frustration: <strong>why don't your tools talk to each other?</strong> This is the answer.</>
+                    label:"02 — Why build this?",
+                    content:<>Most AI tools are isolated. Every session starts from zero — no memory, no action, no context. NoelClaw started from one frustration: <strong>why don't your tools talk to each other?</strong> This is the answer.</>
                   },
                   {
-                    label:"03. Vision & Mission",
-                    content:<><strong>Vision :</strong> Everyone has a personal AI that understands their context and grows with them.<br/><br/><strong>Mission :</strong> Build it in the open. Document every decision. Make the reasoning trail more valuable than the product.</>
+                    label:"03 — Vision & Mission",
+                    content:<><strong>Vision —</strong> Everyone has a personal AI that understands their context and grows with them.<br/><br/><strong>Mission —</strong> Build it in the open. Document every decision. Make the reasoning trail more valuable than the product.</>
                   },
                   {
-                    label:"04. Thank you ",
-                    content:<>Genuinely thanks for reading this far. Whether you found this through X, a friend, or a search you're part of the story now. Follow <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" style={{color:"var(--blue-hi)",textDecoration:"none"}}>@noelclawfun</a> or grab <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" style={{color:"var(--blue-hi)",textDecoration:"none"}}>$NOELCLAW</a>. See you on the other side.</>
+                    label:"04 — Thank you 🦕",
+                    content:<>Genuinely — thanks for reading this far. Whether you found this through X, a friend, or a search — you're part of the story now. Follow <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" style={{color:"var(--blue-hi)",textDecoration:"none"}}>@noelclawfun</a> or grab <a href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer" style={{color:"var(--blue-hi)",textDecoration:"none"}}>$NOELCLAW</a>. See you on the other side.</>
                   },
                 ].map((s,i)=>(
                   <div key={i} style={{
@@ -1278,7 +1465,7 @@ export default function App(){
                     {name:"Vite",     logo:"https://vitejs.dev/logo.svg"},
                     {name:"TypeScript",logo:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"},
                     {name:"Convex",   logo:"https://www.convex.dev/favicon.ico"},
-                    {name:"Claude",   logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1dxbfHSJFAPEwi07FE"},
+                    {name:"Claude",   logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/claude-color.png"},
                     {name:"Vercel",   logo:"https://www.svgrepo.com/show/327408/logo-vercel.svg"},
                     {name:"Base",     logo:"https://avatars.githubusercontent.com/u/108554348"},
                   ].map(t=>(
@@ -1310,7 +1497,7 @@ export default function App(){
                 <img src={LOGO} className="footer-logo-icon" alt=""/>
                 <span><span style={{color:"var(--blue-hi)"}}>Noel</span>Claw</span>
               </div>
-              <p className="footer-desc">Personal AI operating system blog, architecture decisions, and the journey from zero to a composable agent system.</p>
+              <p className="footer-desc">Personal AI operating system — blog, architecture decisions, and the journey from zero to a composable agent system.</p>
               <div className="footer-socials">
                 <a className="footer-social-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer" title="X / Twitter">
                   <img src="/x-logo.jpg" alt="X" style={{width:"14px",height:"14px",objectFit:"contain",filter:"invert(1)",opacity:.8}}/>
