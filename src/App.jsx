@@ -621,6 +621,26 @@ export default function App(){
   const [menuOpen,setMenuOpen] = useState(false);
   const convexArticles = useQuery(api.articles.list);
   const sendMessage = useAction(api.chat.chat);
+  const postToMoltbook = useAction(api.moltbook.postArticle);
+  const [moltPosting, setMoltPosting] = useState(false);
+  const [moltStatus, setMoltStatus] = useState("");
+
+  const handleMoltPost = async () => {
+    if (!art) return;
+    setMoltPosting(true);
+    setMoltStatus("");
+    try {
+      await postToMoltbook({
+        title: art.title,
+        url: `https://noelclaw.fun`,
+        description: art.desc || "",
+      });
+      setMoltStatus("Posted to Moltbook! 🦞");
+    } catch(e) {
+      setMoltStatus("Failed: " + e.message);
+    }
+    setMoltPosting(false);
+  };
   const ARTICLES = convexArticles ?? [];
   const articlesLoading = convexArticles === undefined;
   const endRef=useRef(null), crRef=useRef(null), crrRef=useRef(null);
@@ -727,7 +747,20 @@ export default function App(){
               <div className="rbody">{renderBody(art.body)}</div>
               <div className="rfooter">
                 <span className="rfooter-t">Thanks for reading — NoelClaw</span>
-                <a className="rfooter-x" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 @noelclawfun →</a>
+                <div style={{display:"flex",alignItems:"center",gap:".8rem",flexWrap:"wrap"}}>
+                  {moltStatus && <span style={{fontSize:".72rem",color:"var(--green)"}}>{moltStatus}</span>}
+                  <button onClick={handleMoltPost} disabled={moltPosting} style={{
+                    display:"inline-flex",alignItems:"center",gap:".4rem",
+                    background:"none",border:"1px solid var(--border)",borderRadius:"6px",
+                    padding:".4rem .9rem",fontSize:".72rem",color:"var(--text2)",
+                    cursor:"pointer",transition:"all .2s",fontFamily:"inherit",
+                  }}
+                  onMouseEnter={e=>{e.target.style.borderColor="var(--border2)";e.target.style.color="var(--white)";}}
+                  onMouseLeave={e=>{e.target.style.borderColor="var(--border)";e.target.style.color="var(--text2)";}}>
+                    {moltPosting ? "Posting..." : "🦞 Post to Moltbook"}
+                  </button>
+                  <a className="rfooter-x" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 @noelclawfun →</a>
+                </div>
               </div>
             </div>
           )}
