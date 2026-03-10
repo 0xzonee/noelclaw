@@ -251,6 +251,8 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 
 /* ── READER ── */
 .reader { padding:3.5rem 3.5rem;max-width:860px;margin:0 auto;width:100%; }
+.reader-layout { display:grid;grid-template-columns:1fr 240px;gap:3rem;align-items:start;max-width:1100px;margin:0 auto;padding:3.5rem 3.5rem;width:100%; }
+.reader-main { min-width:0; }
 .rback { display:inline-flex;align-items:center;gap:.45rem;font-size:.75rem;color:var(--text2);background:none;border:none;cursor:none;font-family:'DM Sans',sans-serif;margin-bottom:2.5rem;transition:color .2s,gap .2s;padding:0; }
 .rback:hover { color:var(--white);gap:.7rem; }
 .rtags { display:flex;gap:.35rem;margin-bottom:1.2rem; }
@@ -268,6 +270,51 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .rfooter-t { font-size:.75rem;color:var(--text3); }
 .rfooter-x { display:inline-flex;align-items:center;gap:.38rem;font-size:.75rem;color:var(--blue-hi);text-decoration:none;transition:color .2s; }
 .rfooter-x:hover { color:var(--white); }
+
+/* ── LIKE / COMMENT ── */
+.like-bar { display:flex;align-items:center;gap:.8rem;padding:1rem 0;margin:1.5rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+.like-btn { display:inline-flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--border);border-radius:20px;padding:.4rem .9rem;font-size:.75rem;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s; }
+.like-btn:hover,.like-btn.liked { color:var(--white);border-color:rgba(255,100,100,.4);background:rgba(255,100,100,.06); }
+.like-btn.liked .like-icon { filter:none; }
+.like-icon { font-size:.9rem;transition:transform .2s; }
+.like-btn:hover .like-icon,.like-btn.liked .like-icon { transform:scale(1.2); }
+.like-count { font-size:.72rem;color:var(--text2); }
+.comment-section { margin-top:2rem; }
+.comment-title { font-size:.6rem;font-weight:600;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.2rem; }
+.comment-input-wrap { display:flex;gap:.6rem;margin-bottom:1.5rem; }
+.comment-inp { flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:8px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:300;resize:none;outline:none;transition:border-color .22s; }
+.comment-inp:focus { border-color:rgba(26,79,255,.4); }
+.comment-inp::placeholder { color:var(--text3); }
+.comment-submit { background:var(--blue2);color:#fff;border:none;border-radius:8px;padding:.65rem 1rem;font-size:.72rem;font-family:'Inter',sans-serif;cursor:pointer;font-weight:400;transition:background .18s;white-space:nowrap;align-self:flex-end; }
+.comment-submit:hover { background:var(--blue-hi); }
+.comment-list { display:flex;flex-direction:column;gap:1rem; }
+.comment-item { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem; }
+.comment-meta { display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem; }
+.comment-avatar { width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.62rem;color:#fff;font-weight:600;flex-shrink:0; }
+.comment-name { font-size:.72rem;color:var(--text);font-weight:400; }
+.comment-time { font-size:.62rem;color:var(--text3); }
+.comment-text { font-size:.78rem;color:var(--text2);line-height:1.65; }
+
+/* ── READER RIGHT SIDEBAR ── */
+.reader-sidebar { position:sticky;top:5rem;display:flex;flex-direction:column;gap:1rem; }
+.rsb-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem; }
+.rsb-title { font-size:.58rem;font-weight:600;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.9rem; }
+.cat-list { display:flex;flex-direction:column;gap:.35rem; }
+.cat-btn { display:flex;align-items:center;justify-content:space-between;padding:.42rem .7rem;border-radius:6px;background:none;border:1px solid transparent;color:var(--text2);font-size:.75rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all .18s;text-align:left; }
+.cat-btn:hover,.cat-btn.active { color:var(--white);background:var(--surface2);border-color:var(--border); }
+.cat-btn.active { border-color:rgba(26,79,255,.3);background:rgba(26,79,255,.07);color:var(--blue-hi); }
+.cat-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
+
+/* ── RECOMMENDATIONS ── */
+.rec-section { margin-top:3rem;padding-top:2.5rem;border-top:1px solid var(--border); }
+.rec-title { font-size:.6rem;font-weight:600;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.5rem; }
+.rec-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:1rem; }
+.rec-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;cursor:pointer;transition:border-color .2s,transform .2s; }
+.rec-card:hover { border-color:var(--border2);transform:translateY(-2px); }
+.rec-tags { display:flex;gap:.3rem;margin-bottom:.6rem;flex-wrap:wrap; }
+.rec-card-title { font-size:.85rem;color:var(--text);font-weight:300;line-height:1.35;margin-bottom:.4rem; }
+.rec-card-desc { font-size:.72rem;color:var(--text2);line-height:1.6; }
+.rec-card-meta { font-size:.62rem;color:var(--text3);margin-top:.6rem; }
 
 /* ── DASHBOARD ── */
 .dash { padding:2.5rem 3.5rem;animation:pin .4s cubic-bezier(.23,1,.32,1) both; }
@@ -345,8 +392,10 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .tar-v { font-size:.65rem;color:var(--blue-hi);font-weight:600; }
 
 /* ── ABOUT ── */
-.about { padding:4rem 3.5rem; }
-.abt-top { display:flex;align-items:center;gap:2rem;margin-bottom:3rem; }
+.about { padding:4rem 3.5rem;display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start; }
+.abt-left {}
+.abt-right { display:flex;flex-direction:column;gap:1.2rem;position:sticky;top:5rem; }
+.abt-top { display:flex;align-items:center;gap:2rem;margin-bottom:3rem;grid-column:1/-1; }
 .abt-wrap { position:relative;width:76px;height:76px;flex-shrink:0; }
 .abt-logo { width:76px;height:76px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(26,79,255,.6));animation:fl 4s ease-in-out infinite; }
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -356,7 +405,7 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .abt-name { font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:500;color:var(--white);line-height:1; }
 .abt-name em { color:var(--blue-hi);font-style:italic; }
 .abt-handle { font-size:.76rem;color:var(--text2);margin-top:.4rem; }
-.abt-body { font-size:1rem;color:var(--text2);line-height:1.95;font-weight:300;max-width:520px;margin-bottom:3rem; }
+.abt-body { font-size:.9rem;color:var(--text2);line-height:1.95;font-weight:300;margin-bottom:2.5rem; }
 .abt-body strong { color:var(--text);font-weight:500; }
 .abt-body a { color:var(--blue-hi);text-decoration:none; }
 .abt-body a:hover { text-decoration:underline; }
@@ -364,6 +413,15 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 .chips { display:flex;flex-wrap:wrap;gap:.5rem; }
 .chip { font-size:.7rem;padding:.3rem .75rem;border-radius:5px;background:var(--surface);border:1px solid var(--border);color:var(--text2);transition:color .2s,border-color .2s; }
 .chip:hover { color:var(--text);border-color:var(--border2); }
+.abt-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem; }
+.abt-card-title { font-size:.58rem;font-weight:600;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1rem; }
+.abt-stat-row { display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--border); }
+.abt-stat-row:last-child { border-bottom:none; }
+.abt-stat-label { font-size:.75rem;color:var(--text2); }
+.abt-stat-val { font-size:.75rem;color:var(--white);font-weight:500; }
+.abt-links { display:flex;flex-direction:column;gap:.55rem; }
+.abt-link-btn { display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;border-radius:8px;background:none;border:1px solid var(--border);color:var(--text2);text-decoration:none;font-size:.75rem;font-family:'Inter',sans-serif;transition:all .2s;cursor:none; }
+.abt-link-btn:hover { color:var(--white);border-color:var(--border2);background:var(--surface2); }
 
 /* ══════════════════════════════
    FOOTER — like ACTO screenshot
@@ -534,13 +592,18 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
 @media(max-width:900px){
   .nav { padding:0 1.4rem; }
   .hero-content { padding:0 1.8rem; }
-  .section,.reader,.dash,.analytics,.about,.footer-main { padding-left:1.5rem;padding-right:1.5rem; }
+  .section,.reader,.dash,.analytics,.footer-main { padding-left:1.5rem;padding-right:1.5rem; }
   .stats-row .stat-box { padding-left:1.5rem;padding-right:1.5rem; }
   .footer-main { grid-template-columns:1fr 1fr; }
   .footer-bottom { padding-left:1.5rem;padding-right:1.5rem; }
   .an-kpis,.kpi-grid { grid-template-columns:repeat(2,1fr); }
   .three-col { grid-template-columns:1fr; }
   .chat-popup { width:calc(100vw - 2.5rem);right:1.25rem;bottom:5.5rem;max-height:min(520px, calc(100vh - 7rem));height:min(520px, calc(100vh - 7rem)); }
+  .reader-layout { grid-template-columns:1fr;padding:2rem 1.5rem; }
+  .reader-sidebar { position:static; }
+  .about { grid-template-columns:1fr;padding-left:1.5rem;padding-right:1.5rem; }
+  .abt-right { position:static; }
+  .rec-grid { grid-template-columns:1fr; }
 }
 @media(max-width:600px){
   html,body { overflow-x:hidden;width:100%; }
@@ -562,6 +625,8 @@ body:has(a:hover) #crr,body:has(button:hover) #crr { width:46px;height:46px;bord
   .stat-box { border-right:none;border-bottom:1px solid var(--border);padding:1.4rem 1.2rem; }
   .stat-box:last-child { border-bottom:none; }
   .section,.reader,.dash,.analytics,.about { padding-left:1.2rem;padding-right:1.2rem; }
+  .reader-layout { padding:1.5rem 1.2rem; }
+  .rec-grid { grid-template-columns:1fr; }
   .arow { flex-direction:column;gap:.5rem;padding:1.2rem 1rem; }
   .ameta { flex-direction:row;gap:1rem; }
   .anum { display:none; }
@@ -642,6 +707,14 @@ export default function App(){
   };
   const [moltPosting, setMoltPosting] = useState(false);
   const [moltStatus, setMoltStatus] = useState("");
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(24);
+  const [comments, setComments] = useState([
+    {id:1,name:"Alex",initial:"A",text:"This is exactly the kind of thinking we need more of. Great breakdown of the architecture.",time:"2h ago",color:"#3b82f6"},
+    {id:2,name:"Maya",initial:"M",text:"The composable agent idea reminds me of Unix pipes but for AI. Really interesting direction.",time:"5h ago",color:"#a78bfa"},
+  ]);
+  const [commentVal, setCommentVal] = useState("");
+  const [activeCat, setActiveCat] = useState("All");
 
   const handleMoltPost = async () => {
     if (!art) return;
@@ -754,48 +827,123 @@ export default function App(){
 
           {/* READER */}
           {art&&(
-            <div className="reader">
-              <button className="rback" onClick={()=>setArt(null)}>← Back</button>
-              <div className="rtags">{art.tags.map(t=><span key={t.k} className={`atag ${t.c}`}>{t.k}</span>)}</div>
-              <h1 className="rtitle">{art.title}</h1>
-              <div className="rmeta">
-                <span className="rdate">{art.date}</span><div className="rsep"/>
-                <span className="rmin">{art.read} read</span>
-              </div>
-              <div className="rbody">{renderBody(art.body)}</div>
-
-              {/* Share bar */}
-              <div style={{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"10px",padding:"1rem 1.2rem",margin:"2rem 0",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:".8rem"}}>
-                <div style={{fontSize:".78rem",color:"var(--text2)"}}>Share this article</div>
-                <div style={{display:"flex",gap:".5rem",flexWrap:"wrap"}}>
-                  <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(art.title+" — "+art.desc+" noelclaw.fun @noelclawfun")}`} target="_blank" rel="noopener noreferrer" style={{
-                    display:"inline-flex",alignItems:"center",gap:".35rem",
-                    background:"#000",border:"1px solid var(--border)",borderRadius:"6px",
-                    padding:".38rem .8rem",fontSize:".72rem",color:"var(--white)",textDecoration:"none",
-                  }}>𝕏 Share on X</a>
-                  <button onClick={()=>{navigator.clipboard.writeText("https://noelclaw.fun");}} style={{
-                    display:"inline-flex",alignItems:"center",gap:".35rem",
-                    background:"none",border:"1px solid var(--border)",borderRadius:"6px",
-                    padding:".38rem .8rem",fontSize:".72rem",color:"var(--text2)",cursor:"pointer",fontFamily:"inherit",
-                  }}>🔗 Copy Link</button>
+            <div className="reader-layout">
+              {/* LEFT: main content */}
+              <div className="reader-main">
+                <button className="rback" onClick={()=>setArt(null)}>← Back</button>
+                <div className="rtags">{art.tags.map(t=><span key={t.k} className={`atag ${t.c}`}>{t.k}</span>)}</div>
+                <h1 className="rtitle">{art.title}</h1>
+                <div className="rmeta">
+                  <span className="rdate">{art.date}</span><div className="rsep"/>
+                  <span className="rmin">{art.read} read</span>
                 </div>
+                <div className="rbody">{renderBody(art.body)}</div>
+
+                {/* Like bar */}
+                <div className="like-bar">
+                  <button className={`like-btn${liked?" liked":""}`} onClick={()=>{setLiked(l=>!l);setLikeCount(c=>liked?c-1:c+1);}}>
+                    <span className="like-icon">{liked?"❤️":"🤍"}</span> {liked?"Liked":"Like"}
+                  </button>
+                  <span className="like-count">{likeCount} likes</span>
+                </div>
+
+                {/* Share bar */}
+                <div style={{background:"rgba(255,255,255,.03)",border:"1px solid var(--border)",borderRadius:"10px",padding:"1rem 1.2rem",margin:"1.5rem 0",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:".8rem"}}>
+                  <div style={{fontSize:".78rem",color:"var(--text2)"}}>Share this article</div>
+                  <div style={{display:"flex",gap:".5rem",flexWrap:"wrap"}}>
+                    <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(art.title+" — "+art.desc+" noelclaw.fun @noelclawfun")}`} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:".35rem",background:"#000",border:"1px solid var(--border)",borderRadius:"6px",padding:".38rem .8rem",fontSize:".72rem",color:"var(--white)",textDecoration:"none"}}>𝕏 Share on X</a>
+                    <button onClick={()=>navigator.clipboard.writeText("https://noelclaw.fun")} style={{display:"inline-flex",alignItems:"center",gap:".35rem",background:"none",border:"1px solid var(--border)",borderRadius:"6px",padding:".38rem .8rem",fontSize:".72rem",color:"var(--text2)",cursor:"pointer",fontFamily:"inherit"}}>🔗 Copy Link</button>
+                  </div>
+                </div>
+
+                <div className="rfooter">
+                  <span className="rfooter-t">Thanks for reading — NoelClaw</span>
+                  <div style={{display:"flex",alignItems:"center",gap:".8rem",flexWrap:"wrap"}}>
+                    {moltStatus && <span style={{fontSize:".72rem",color:"var(--green)"}}>{moltStatus}</span>}
+                    <button onClick={handleMoltPost} disabled={moltPosting} style={{display:"inline-flex",alignItems:"center",gap:".4rem",background:"none",border:"1px solid var(--border)",borderRadius:"6px",padding:".4rem .9rem",fontSize:".72rem",color:"var(--text2)",cursor:"pointer",transition:"all .2s",fontFamily:"inherit"}}
+                    onMouseEnter={e=>{e.target.style.borderColor="var(--border2)";e.target.style.color="var(--white)";}}
+                    onMouseLeave={e=>{e.target.style.borderColor="var(--border)";e.target.style.color="var(--text2)";}}>
+                      {moltPosting ? "Posting..." : "🦞 Post to Moltbook"}
+                    </button>
+                    <a className="rfooter-x" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 @noelclawfun →</a>
+                  </div>
+                </div>
+
+                {/* Comments */}
+                <div className="comment-section">
+                  <div className="comment-title">Comments ({comments.length})</div>
+                  <div className="comment-input-wrap">
+                    <textarea className="comment-inp" rows={2} placeholder="Share your thoughts..." value={commentVal} onChange={e=>setCommentVal(e.target.value)}
+                      onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&commentVal.trim()){e.preventDefault();setComments(c=>[...c,{id:Date.now(),name:"You",initial:"Y",text:commentVal.trim(),time:"just now",color:"#22d3a5"}]);setCommentVal("");}}}
+                    />
+                    <button className="comment-submit" onClick={()=>{if(commentVal.trim()){setComments(c=>[...c,{id:Date.now(),name:"You",initial:"Y",text:commentVal.trim(),time:"just now",color:"#22d3a5"}]);setCommentVal("");}}} disabled={!commentVal.trim()}>Post</button>
+                  </div>
+                  <div className="comment-list">
+                    {comments.map(c=>(
+                      <div key={c.id} className="comment-item">
+                        <div className="comment-meta">
+                          <div className="comment-avatar" style={{background:c.color}}>{c.initial}</div>
+                          <span className="comment-name">{c.name}</span>
+                          <span className="comment-time">{c.time}</span>
+                        </div>
+                        <div className="comment-text">{c.text}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                {ARTICLES.filter(a2=>a2.title!==art.title).length>0&&(
+                  <div className="rec-section">
+                    <div className="rec-title">More to read</div>
+                    <div className="rec-grid">
+                      {ARTICLES.filter(a2=>a2.title!==art.title).slice(0,4).map((a2,i)=>(
+                        <div key={i} className="rec-card" onClick={()=>{setArt(a2);setLiked(false);setLikeCount(Math.floor(Math.random()*40+10));window.scrollTo({top:0,behavior:'instant'});}}>
+                          <div className="rec-tags">{a2.tags?.map(t=><span key={t.k} className={`atag ${t.c}`}>{t.k}</span>)}</div>
+                          <div className="rec-card-title">{a2.title}</div>
+                          <div className="rec-card-desc">{a2.desc}</div>
+                          <div className="rec-card-meta">{a2.date} · {a2.read} read</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="rfooter">
-                <span className="rfooter-t">Thanks for reading — NoelClaw</span>
-                <div style={{display:"flex",alignItems:"center",gap:".8rem",flexWrap:"wrap"}}>
-                  {moltStatus && <span style={{fontSize:".72rem",color:"var(--green)"}}>{moltStatus}</span>}
-                  <button onClick={handleMoltPost} disabled={moltPosting} style={{
-                    display:"inline-flex",alignItems:"center",gap:".4rem",
-                    background:"none",border:"1px solid var(--border)",borderRadius:"6px",
-                    padding:".4rem .9rem",fontSize:".72rem",color:"var(--text2)",
-                    cursor:"pointer",transition:"all .2s",fontFamily:"inherit",
-                  }}
-                  onMouseEnter={e=>{e.target.style.borderColor="var(--border2)";e.target.style.color="var(--white)";}}
-                  onMouseLeave={e=>{e.target.style.borderColor="var(--border)";e.target.style.color="var(--text2)";}}>
-                    {moltPosting ? "Posting..." : "🦞 Post to Moltbook"}
-                  </button>
-                  <a className="rfooter-x" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">𝕏 @noelclawfun →</a>
+              {/* RIGHT: category sidebar */}
+              <div className="reader-sidebar">
+                <div className="rsb-card">
+                  <div className="rsb-title">Categories</div>
+                  <div className="cat-list">
+                    {[
+                      {name:"All",color:"#4d85ff"},
+                      {name:"AI",color:"#3b82f6"},
+                      {name:"Crypto",color:"#22d3a5"},
+                      {name:"Finance",color:"#f97316"},
+                      {name:"Business",color:"#a78bfa"},
+                      {name:"Mindset",color:"#f59e0b"},
+                    ].map(cat=>(
+                      <button key={cat.name} className={`cat-btn${activeCat===cat.name?" active":""}`} onClick={()=>setActiveCat(cat.name)}>
+                        <span>{cat.name}</span>
+                        <span className="cat-dot" style={{background:cat.color}}/>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rsb-card">
+                  <div className="rsb-title">About this article</div>
+                  <div style={{fontSize:".75rem",color:"var(--text2)",lineHeight:1.7,marginBottom:".8rem"}}>{art.desc}</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:".3rem"}}>{art.tags?.map(t=><span key={t.k} className={`atag ${t.c}`}>{t.k}</span>)}</div>
+                </div>
+
+                <div className="rsb-card" style={{background:"linear-gradient(135deg,rgba(26,79,255,.08),rgba(77,133,255,.04))"}}>
+                  <div className="rsb-title">Enjoying NoelClaw?</div>
+                  <p style={{fontSize:".73rem",color:"var(--text2)",lineHeight:1.65,marginBottom:"1rem"}}>Follow on X for real-time updates as we build in public.</p>
+                  <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer"
+                    style={{display:"inline-flex",alignItems:"center",gap:".4rem",background:"#000",border:"1px solid var(--border)",borderRadius:"6px",padding:".45rem .9rem",fontSize:".72rem",color:"var(--white)",textDecoration:"none"}}>
+                    𝕏 Follow @noelclawfun
+                  </a>
                 </div>
               </div>
             </div>
@@ -1082,7 +1230,8 @@ export default function App(){
           {!art&&page==="about"&&(
             <div className="page">
               <div className="about">
-                <div className="abt-top">
+                {/* Top header — spans full width */}
+                <div className="abt-top" style={{gridColumn:"1/-1"}}>
                   <div className="abt-wrap">
                     <img src={LOGO} className="abt-logo" alt="NoelClaw"/>
                     <div className="abt-ring"/>
@@ -1093,25 +1242,69 @@ export default function App(){
                   </div>
                 </div>
 
-                {/* Story */}
-                <div className="stk-hd" style={{marginTop:"2rem"}}>The Story</div>
-                <p className="abt-body">
-                  NoelClaw started as a simple question: <strong>what would it look like if your AI tools weren't scattered across 10 different apps?</strong><br/><br/>
-                  The idea was to build one composable system — a personal AI operating system — that could read, write, research, and act on your behalf. Not a chatbot. Not a productivity wrapper. Something closer to an OS layer for thinking.<br/><br/>
-                  Every decision made while building NoelClaw gets documented publicly. The architecture, the failures, the pivots. Because the most valuable thing isn't the final product — it's the reasoning behind every choice.<br/><br/>
-                  This site is that log. The articles are real. The AI you can chat with here is part of what's being built. The token is how we share the upside with the people following along.<br/><br/>
-                  <strong>We're building in public. Come watch — or build with us.</strong>
-                </p>
+                {/* LEFT — story + stack */}
+                <div className="abt-left">
+                  <div className="stk-hd">The Story</div>
+                  <p className="abt-body">
+                    NoelClaw started as a simple question: <strong>what would it look like if your AI tools weren't scattered across 10 different apps?</strong><br/><br/>
+                    The idea was to build one composable system — a personal AI operating system — that could read, write, research, and act on your behalf. Not a chatbot. Not a productivity wrapper. Something closer to an OS layer for thinking.<br/><br/>
+                    Every decision made while building NoelClaw gets documented publicly. The architecture, the failures, the pivots. Because the most valuable thing isn't the final product — it's the reasoning behind every choice.<br/><br/>
+                    This site is that log. The articles are real. The AI you can chat with here is part of what's being built. The token is how we share the upside with the people following along.<br/><br/>
+                    <strong>We're building in public. Come watch — or build with us.</strong>
+                  </p>
 
-                {/* Stack */}
-                <div className="stk-hd">Stack</div>
-                <div className="chips">
-                  {["React","Vite","TypeScript","Convex","Claude API","Vercel","DexScreener","Moltbook","Base Chain"].map(s=>(
-                    <span className="chip" key={s}>{s}</span>
-                  ))}
+                  <div className="stk-hd">Stack</div>
+                  <div className="chips">
+                    {["React","Vite","TypeScript","Convex","Claude API","Vercel","DexScreener","Moltbook","Base Chain"].map(s=>(
+                      <span className="chip" key={s}>{s}</span>
+                    ))}
+                  </div>
                 </div>
 
+                {/* RIGHT — stats + links */}
+                <div className="abt-right">
+                  <div className="abt-card">
+                    <div className="abt-card-title">Project Stats</div>
+                    {[
+                      ["Articles","12+"],["AI Systems","3"],["Status","Live 🟢"],
+                      ["Token","$NOELCLAW"],["Chain","Base"],["Readers","Growing"],
+                    ].map(([l,v])=>(
+                      <div className="abt-stat-row" key={l}>
+                        <span className="abt-stat-label">{l}</span>
+                        <span className="abt-stat-val">{v}</span>
+                      </div>
+                    ))}
+                  </div>
 
+                  <div className="abt-card">
+                    <div className="abt-card-title">Links</div>
+                    <div className="abt-links">
+                      <a className="abt-link-btn" href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer">
+                        <span style={{fontSize:"1rem"}}>𝕏</span> @noelclawfun
+                      </a>
+                      <a className="abt-link-btn" href="https://flaunch.gg/base/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">
+                        <span>🔗</span> Buy $NOELCLAW
+                      </a>
+                      <a className="abt-link-btn" href="https://takeover.fun/coin/0xa57d8ce207c7daaeeed4e3a491bdf51d89233af3" target="_blank" rel="noopener noreferrer">
+                        <span>🎯</span> Mint Tiles
+                      </a>
+                      <button className="abt-link-btn" onClick={()=>setChatOpen(true)} style={{border:"1px solid var(--border)"}}>
+                        <span>💬</span> Chat with Noel
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="abt-card" style={{background:"linear-gradient(135deg,rgba(26,79,255,.08),rgba(77,133,255,.04))"}}>
+                    <div className="abt-card-title">Building in public</div>
+                    <p style={{fontSize:".75rem",color:"var(--text2)",lineHeight:1.7,marginBottom:".8rem"}}>
+                      Every decision, failure, and insight gets documented. Follow along on X for real-time updates.
+                    </p>
+                    <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer"
+                      style={{display:"inline-flex",alignItems:"center",gap:".4rem",fontSize:".72rem",color:"var(--blue-hi)",textDecoration:"none"}}>
+                      Follow the journey →
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           )}
