@@ -4137,10 +4137,10 @@ Live data:
                       letterSpacing:"-.04em",
                       lineHeight:.92,
                       color:"#fff",
-                    }}>AI Agent.</span>
+                    }}>AI Agent</span>
                   </h1>
                   <p className="hero-tagline">
-                    Analyze any token. Execute real swaps. Deploy contracts. Set limit orders — all via <strong>natural language</strong>. Powered by Bankr. No code required.
+                    Analyze any token. Execute real swaps. Deploy contracts. Set limit orders all via <strong>natural language</strong>. Powered by Bankr. No code required.
                   </p>
                   <div className="hero-ctas">
                     <MagBtn><button className="cta-solid" onClick={()=>navTo("articles")}>Open Noel Agent →</button></MagBtn>
@@ -4838,7 +4838,7 @@ Live data:
                   </div>
                   <h1 style={{fontSize:"clamp(2.5rem,6vw,5rem)",fontWeight:800,color:"#fff",letterSpacing:"-.04em",lineHeight:.92,marginBottom:".8rem"}}>About NoelClaw</h1>
                   <p style={{fontSize:"1.05rem",color:"rgba(180,200,255,.55)",fontWeight:300,maxWidth:"540px",margin:"0 auto 2rem",lineHeight:1.75}}>
-                    An AI agent platform on Base chain — execute trades, deploy tokens, and analyze markets via natural language. Powered by Bankr API.
+                    An AI agent platform on Base chain execute trades, deploy tokens, and analyze markets via natural language. Powered by Bankr API.
                   </p>
                   <div style={{display:"flex",gap:".75rem",justifyContent:"center",flexWrap:"wrap"}}>
                     <a href="https://x.com/noelclawfun" target="_blank" rel="noopener noreferrer"
